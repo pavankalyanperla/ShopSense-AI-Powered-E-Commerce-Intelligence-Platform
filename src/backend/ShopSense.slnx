@@ -1,0 +1,27 @@
+<Solution>
+  <Project Path="ApiGateway/ApiGateway.csproj" />
+  <Project Path="IdentityService.API/IdentityService.API.csproj" />
+  <Project Path="IdentityService.Application/IdentityService.Application.csproj" />
+  <Project Path="IdentityService.Domain/IdentityService.Domain.csproj" />
+  <Project Path="IdentityService.Infrastructure/IdentityService.Infrastructure.csproj" />
+  <Project Path="NotificationService.API/NotificationService.API.csproj" />
+  <Project Path="NotificationService.Application/NotificationService.Application.csproj" />
+  <Project Path="NotificationService.Domain/NotificationService.Domain.csproj" />
+  <Project Path="NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+  <Project Path="OrderService.API/OrderService.API.csproj" />
+  <Project Path="OrderService.Application/OrderService.Application.csproj" />
+  <Project Path="OrderService.Domain/OrderService.Domain.csproj" />
+  <Project Path="OrderService.Infrastructure/OrderService.Infrastructure.csproj" />
+  <Project Path="ProductService.API/ProductService.API.csproj" />
+  <Project Path="ProductService.Application/ProductService.Application.csproj" />
+  <Project Path="ProductService.Domain/ProductService.Domain.csproj" />
+  <Project Path="ProductService.Infrastructure/ProductService.Infrastructure.csproj" />
+  <Project Path="ReviewService.API/ReviewService.API.csproj" />
+  <Project Path="ReviewService.Application/ReviewService.Application.csproj" />
+  <Project Path="ReviewService.Domain/ReviewService.Domain.csproj" />
+  <Project Path="ReviewService.Infrastructure/ReviewService.Infrastructure.csproj" />
+  <Project Path="SellerService.API/SellerService.API.csproj" />
+  <Project Path="SellerService.Application/SellerService.Application.csproj" />
+  <Project Path="SellerService.Domain/SellerService.Domain.csproj" />
+  <Project Path="SellerService.Infrastructure/SellerService.Infrastructure.csproj" />
+</Solution>

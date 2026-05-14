@@ -1,0 +1,28 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+appsettings.Development.json
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+**/.env
+**/models/*.pkl
+**/models/*.joblib
+
+# Node / Angular
+**/node_modules/
+**/dist/
+.angular/
+
+# Docker
+.env
+
+# Misc
+.DS_Store
+Thumbs.db

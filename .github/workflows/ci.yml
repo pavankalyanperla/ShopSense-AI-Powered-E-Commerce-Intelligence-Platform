@@ -1,0 +1,64 @@
+name: ShopSense CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-dotnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Restore
+        run: dotnet restore src/backend/ShopSense.sln
+      
+      - name: Build
+        run: dotnet build src/backend/ShopSense.sln --no-restore -c Release
+      
+      - name: Test
+        run: dotnet test src/backend/ShopSense.sln --no-build -c Release --verbosity normal
+
+  build-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [FraudService, RecommendationService, SentimentService, ForecastingService, ChurnService, PricingService]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install -r src/ml/${{ matrix.service }}/requirements.txt
+      
+      - name: Lint
+        run: pip install flake8 && flake8 src/ml/${{ matrix.service }}/app/ --max-line-length=120
+
+  build-angular:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install
+        run: npm ci
+        working-directory: src/frontend/shopsense-frontend
+      
+      - name: Build
+        run: npm run build
+        working-directory: src/frontend/shopsense-frontend

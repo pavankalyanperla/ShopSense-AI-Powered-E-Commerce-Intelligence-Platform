@@ -1,0 +1,309 @@
+version: '3.9'
+
+networks:
+  shopsense-network:
+    driver: bridge
+
+volumes:
+  sqlserver-data:
+  redis-data:
+  rabbitmq-data:
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: shopsense-sqlserver
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "SELECT 1"]
+      interval: 15s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: shopsense-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: shopsense-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      retries: 10
+
+  identity-service:
+    build:
+      context: ./src/backend
+      dockerfile: IdentityService.API/Dockerfile
+    container_name: shopsense-identity
+    ports:
+      - "5100:5100"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_IdentityDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - Redis__ConnectionString=redis:6379
+      - ASPNETCORE_URLS=http://+:5100
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5100/health"]
+      interval: 20s
+      retries: 5
+
+  product-service:
+    build:
+      context: ./src/backend
+      dockerfile: ProductService.API/Dockerfile
+    container_name: shopsense-product
+    ports:
+      - "5200:5200"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ProductDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - ASPNETCORE_URLS=http://+:5200
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5200/health"]
+      interval: 20s
+      retries: 5
+
+  order-service:
+    build:
+      context: ./src/backend
+      dockerfile: OrderService.API/Dockerfile
+    container_name: shopsense-order
+    ports:
+      - "5300:5300"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_OrderDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - RabbitMQ__Host=rabbitmq
+      - ASPNETCORE_URLS=http://+:5300
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5300/health"]
+      interval: 20s
+      retries: 5
+
+  review-service:
+    build:
+      context: ./src/backend
+      dockerfile: ReviewService.API/Dockerfile
+    container_name: shopsense-review
+    ports:
+      - "5400:5400"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ReviewDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - ASPNETCORE_URLS=http://+:5400
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5400/health"]
+      interval: 20s
+      retries: 5
+
+  seller-service:
+    build:
+      context: ./src/backend
+      dockerfile: SellerService.API/Dockerfile
+    container_name: shopsense-seller
+    ports:
+      - "5500:5500"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_SellerDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - ASPNETCORE_URLS=http://+:5500
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5500/health"]
+      interval: 20s
+      retries: 5
+
+  notification-service:
+    build:
+      context: ./src/backend
+      dockerfile: NotificationService.API/Dockerfile
+    container_name: shopsense-notification
+    ports:
+      - "5600:5600"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_NotificationDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET}
+      - RabbitMQ__Host=rabbitmq
+      - Gmail__User=${GMAIL_USER}
+      - Gmail__AppPassword=${GMAIL_APP_PASSWORD}
+      - ASPNETCORE_URLS=http://+:5600
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5600/health"]
+      interval: 20s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: ./src/backend
+      dockerfile: ApiGateway/Dockerfile
+    container_name: shopsense-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+    depends_on:
+      - identity-service
+      - product-service
+      - order-service
+      - review-service
+      - seller-service
+      - notification-service
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 20s
+      retries: 5
+
+  fraud-service:
+    build: ./src/ml/FraudService
+    container_name: shopsense-fraud
+    ports:
+      - "8001:8001"
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 20s
+      retries: 5
+
+  recommendation-service:
+    build: ./src/ml/RecommendationService
+    container_name: shopsense-recommendation
+    ports:
+      - "8002:8002"
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 20s
+      retries: 5
+
+  sentiment-service:
+    build: ./src/ml/SentimentService
+    container_name: shopsense-sentiment
+    ports:
+      - "8003:8003"
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 20s
+      retries: 5
+
+  forecasting-service:
+    build: ./src/ml/ForecastingService
+    container_name: shopsense-forecasting
+    ports:
+      - "8004:8004"
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 20s
+      retries: 5
+
+  churn-service:
+    build: ./src/ml/ChurnService
+    container_name: shopsense-churn
+    ports:
+      - "8005:8005"
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      interval: 20s
+      retries: 5
+
+  pricing-service:
+    build: ./src/ml/PricingService
+    container_name: shopsense-pricing
+    ports:
+      - "8006:8006"
+    networks:
+      - shopsense-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      interval: 20s
+      retries: 5
+
+  frontend:
+    build: ./src/frontend/shopsense-frontend
+    container_name: shopsense-frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api-gateway
+    networks:
+      - shopsense-network

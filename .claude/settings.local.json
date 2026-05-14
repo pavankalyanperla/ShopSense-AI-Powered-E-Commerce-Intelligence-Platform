@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet --version)",
+      "Bash(npm --version)",
+      "Bash(ng version *)",
+      "Bash(cd \"c:\\\\Users\\\\Pavan\\\\Desktop\\\\ShopSense-Ecommerce\" && mkdir -p src/backend src/frontend src/ml/FraudService src/ml/RecommendationService src/ml/SentimentService src/ml/ForecastingService src/ml/ChurnService src/ml/PricingService docker docs/diagrams .github/workflows && echo \"Folders created\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Pavan\\Desktop\\ShopSense-Ecommerce\\src"
+    ]
+  }
+}

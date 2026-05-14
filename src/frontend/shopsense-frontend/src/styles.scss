@@ -1,0 +1,104 @@
+﻿@use 'primeflex/primeflex.scss';
+@import 'primeicons/primeicons.css';
+
+// ShopSense Design Tokens
+:root {
+  --ss-brand-blue: #1F4E79;
+  --ss-brand-light: #2E75B6;
+  --ss-brand-accent: #E8F4FD;
+  --ss-success: #1E6B3E;
+  --ss-warning: #BA7517;
+  --ss-danger: #B91C1C;
+  --ss-surface-0: #FFFFFF;
+  --ss-surface-50: #F8FAFC;
+  --ss-surface-100: #F1F5F9;
+  --ss-surface-200: #E2E8F0;
+  --ss-surface-300: #CBD5E1;
+  --ss-text-primary: #0F172A;
+  --ss-text-secondary: #475569;
+  --ss-text-muted: #94A3B8;
+  --ss-border-radius: 12px;
+  --ss-shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --ss-shadow-md: 0 4px 16px rgba(0,0,0,.10);
+  --ss-shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--ss-surface-50);
+  color: var(--ss-text-primary);
+}
+
+// Utility classes
+.ss-card {
+  background: var(--ss-surface-0);
+  border: 1px solid var(--ss-surface-200);
+  border-radius: var(--ss-border-radius);
+  box-shadow: var(--ss-shadow-sm);
+  transition: box-shadow .2s, transform .2s;
+}
+
+.ss-card:hover {
+  box-shadow: var(--ss-shadow-md);
+  transform: translateY(-2px);
+}
+
+.ss-page { 
+  padding: 1.5rem; 
+  max-width: 1280px; 
+  margin: 0 auto; 
+}
+
+.ss-section-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--ss-text-primary);
+  margin: 0 0 1rem;
+}
+
+.price-current {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ss-brand-blue);
+}
+
+.price-original {
+  font-size: .875rem;
+  color: var(--ss-text-muted);
+  text-decoration: line-through;
+  margin-left: .375rem;
+}
+
+.discount-badge {
+  background: #FEF2F2;
+  color: var(--ss-danger);
+  font-size: .7rem;
+  font-weight: 600;
+  padding: .125rem .5rem;
+  border-radius: 20px;
+}
+
+.sentiment-positive { color: var(--ss-success); }
+.sentiment-negative { color: var(--ss-danger); }
+.sentiment-neutral  { color: var(--ss-warning); }
+
+.stock-high   { color: var(--ss-success); font-size:.8rem }
+.stock-low    { color: var(--ss-warning); font-size:.8rem }
+.stock-none   { color: var(--ss-danger);  font-size:.8rem }
+
+// Scrollbar
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ss-surface-100); }
+::-webkit-scrollbar-thumb {
+  background: var(--ss-surface-300);
+  border-radius: 3px;
+}
+
+// PrimeNG overrides
+.p-button { border-radius: 8px !important; }
+.p-card { border-radius: var(--ss-border-radius) !important; }
+.p-inputtext { border-radius: 8px !important; }
+.p-tag { border-radius: 20px !important; }
