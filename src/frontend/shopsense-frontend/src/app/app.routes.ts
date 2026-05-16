@@ -5,7 +5,7 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', loadComponent: () => import('./features/landing/landing.component').then(m => m.LandingComponent) },
-  { 
+  {
     path: 'auth',
     children: [
       { path: 'login', loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent) },
@@ -15,5 +15,13 @@ export const routes: Routes = [
   {
     path: 'customer',
     loadChildren: () => import('./features/customer/customer.routes').then(m => m.customerRoutes)
+  },
+  {
+    path: 'seller',
+    loadChildren: () => import('./features/seller/seller.routes').then(m => m.SELLER_ROUTES)
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   }
 ];

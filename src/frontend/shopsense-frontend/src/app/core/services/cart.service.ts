@@ -130,4 +130,32 @@ export class CartService {
   validateCoupon(request: CouponValidationRequest): Observable<CouponValidationResult> {
     return this.http.post<CouponValidationResult>(`${this.apiUrl}/coupons/validate`, request);
   }
+
+  // Seller order methods
+  getSellerOrders(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/orders/seller`);
+  }
+
+  updateOrderStatus(orderId: string, status: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/orders/${orderId}/status`, { status });
+  }
+
+  // Admin order methods
+  getAllOrders(page = 1, pageSize = 20, status?: string): Observable<any[]> {
+    const query = status ? `&status=${status}` : '';
+    return this.http.get<any[]>(`${this.apiUrl}/orders/admin/all?page=${page}&pageSize=${pageSize}${query}`);
+  }
+
+  // Admin coupon methods
+  createCoupon(payload: any): Observable<Coupon> {
+    return this.http.post<Coupon>(`${this.apiUrl}/coupons`, payload);
+  }
+
+  updateCoupon(couponId: string, payload: any): Observable<Coupon> {
+    return this.http.put<Coupon>(`${this.apiUrl}/coupons/${couponId}`, payload);
+  }
+
+  deleteCoupon(couponId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/coupons/${couponId}`);
+  }
 }

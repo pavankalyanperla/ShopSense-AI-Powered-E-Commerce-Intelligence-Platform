@@ -127,4 +127,9 @@ export class ProductService {
       });
     }
   }
+
+  // Admin/Seller product creation
+  createProduct(request: any): Observable<ProductDto> {
+    return this.http.post<ProductDto>(this.API_URL, request);
+  }
 }
