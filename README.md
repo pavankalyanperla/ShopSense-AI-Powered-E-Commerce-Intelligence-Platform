@@ -66,20 +66,21 @@ cd src/frontend/shopsense-frontend && npm start     # Port 4200
 - ✅ Responsive design (mobile-first)
 
 ### Seller Features
-- ✅ Seller registration
-- ✅ KYC verification (Aadhaar, PAN, GST)
-- ✅ Earnings tracking
-- ✅ AI-powered Listing Coach (0-100 scoring)
+- ✅ Seller registration portal (business name + phone)
+- ✅ KYC submission form (Aadhaar, PAN, GST, bank details with validation)
+- ✅ Seller dashboard (status banners, earnings cards, quick actions)
+- ✅ AI-powered Listing Coach (0–100 score, sub-score breakdown, SEO keywords, improvement tips)
+- ✅ Product management (add/edit listings, stock status, category filter)
+- ✅ Order management (filter by status, mark Shipped / Delivered, order detail dialog)
+- ✅ Earnings & payouts page (total, pending, this-month KPIs + transaction history)
 - ✅ Reply to customer reviews
 
 ### Admin Features
-- ✅ User management
-- ✅ Product management
-- ✅ Category management
-- ✅ Order management
-- ✅ Review moderation
-- ✅ Seller approval
-- ✅ Coupon management
+- ✅ Admin dashboard (KPI cards, recent orders table, pending KYC quick-approve panel)
+- ✅ KYC Review (approve / reject with reason dialog, document status chips, suspend seller)
+- ✅ Order management (search, status filter, inline status transitions)
+- ✅ Coupon management (create / edit / delete coupons with full form dialog)
+- ✅ Dark sidebar navigation layout
 
 ---
 
@@ -122,6 +123,21 @@ cd src/frontend/shopsense-frontend && npm start     # Port 4200
 - **Shopping Cart** (`/customer/cart`) - Cart management, coupon application
 - **My Orders** (`/customer/orders`) - Order history and tracking
 - **My Reviews** (`/customer/reviews`) - Customer reviews with sentiment tags
+
+### Seller Portal (Seller Login Required)
+- **Register** (`/seller/register`) - Become a seller (business name + phone)
+- **Dashboard** (`/seller/dashboard`) - KYC status, earnings cards, quick actions, recent transactions
+- **KYC** (`/seller/kyc`) - Submit Aadhaar / PAN / GST / bank with regex validation
+- **AI Listing Coach** (`/seller/listing-coach`) - Score listings 0–100, get improvement suggestions
+- **My Products** (`/seller/products`) - Manage listings, add new product dialog
+- **Orders** (`/seller/orders`) - Filter & fulfill orders, mark Shipped/Delivered
+- **Earnings** (`/seller/earnings`) - Payout summary + full transaction table
+
+### Admin Portal (Admin Login Required)
+- **Dashboard** (`/admin/dashboard`) - Platform KPIs, recent orders, pending KYC quick-approve
+- **KYC Review** (`/admin/kyc`) - Approve / reject / suspend sellers with document chips
+- **Orders** (`/admin/orders`) - Search + filter all orders, inline status transitions
+- **Coupons** (`/admin/coupons`) - Create, edit, delete platform coupons
 
 ### Design Highlights
 - **Theme**: PrimeNG Aura with custom ShopSense design tokens
@@ -263,14 +279,16 @@ ShopSense-Ecommerce/
 | ReviewService | ✅ Complete | Reviews, ratings, sentiment analysis |
 | SellerService | ✅ Complete | KYC, earnings, listing coach |
 | API Gateway | ✅ Complete | Ocelot routing, CORS |
-| Angular Frontend | ✅ Complete | 10+ pages, responsive design |
+| Customer Portal | ✅ Complete | 10 pages, responsive design |
+| Seller Portal | ✅ Complete | 7 pages (dashboard, KYC, AI coach, products, orders, earnings) |
+| Admin Portal | ✅ Complete | 4 pages (dashboard, KYC review, orders, coupons) |
 
 **Build Status**: ✅ All services build successfully (0 errors, 0 warnings)  
-**Frontend Build**: ✅ Bundle: 971.38 KB (167.23 KB gzipped)  
+**Frontend Build**: ✅ Bundle: 978.26 KB (170.35 KB gzipped)  
 **Total Endpoints**: 50+  
 **Total Databases**: 5  
-**Total Frontend Pages**: 10+  
-**Lines of Code**: ~6,500 (Frontend) + ~15,000 (Backend)
+**Total Frontend Pages**: 21+  
+**Lines of Code**: ~10,000 (Frontend) + ~15,000 (Backend)
 
 ---
 

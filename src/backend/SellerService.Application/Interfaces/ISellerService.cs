@@ -13,4 +13,6 @@ public interface ISellerService
     Task<IEnumerable<EarningsDto>> GetEarningsAsync(Guid sellerId);
     Task<ListingCoachResponse> GetListingCoachAsync(ListingCoachRequest request);
     Task<bool> UpdateStatusAsync(Guid sellerId, string status);
+    Task<SellerDto?> MakeKycDecisionAsync(Guid sellerId, bool isApproved, string? reason);
+    Task<IEnumerable<SellerDto>> GetAllByStatusAsync(string status);
 }

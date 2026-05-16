@@ -10,11 +10,13 @@ public class SellerService : ISellerService
 {
     private readonly ISellerRepository _sellers;
     private readonly IKycVerificationService _kycService;
+    private readonly IMessagePublisher _publisher;
 
-    public SellerService(ISellerRepository sellers, IKycVerificationService kycService)
+    public SellerService(ISellerRepository sellers, IKycVerificationService kycService, IMessagePublisher publisher)
     {
         _sellers = sellers;
         _kycService = kycService;
+        _publisher = publisher;
     }
 
     public async Task<SellerDto> RegisterAsync(RegisterSellerRequest request, Guid userId)
@@ -337,6 +339,42 @@ public class SellerService : ISellerService
         await _sellers.UpdateAsync(seller);
         await _sellers.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<SellerDto?> MakeKycDecisionAsync(Guid sellerId, bool isApproved, string? reason)
+    {
+        var seller = await _sellers.GetByIdAsync(sellerId);
+        if (seller == null) return null;
+
+        seller.Status = isApproved ? SellerStatus.Approved : SellerStatus.Rejected;
+        if (isApproved)
+            seller.ApprovedAt = DateTime.UtcNow;
+        else
+            seller.RejectionReason = reason ?? "KYC documents did not meet requirements";
+
+        await _sellers.UpdateAsync(seller);
+        await _sellers.SaveChangesAsync();
+
+        await _publisher.PublishAsync("kyc.decision", "", new
+        {
+            SellerId = seller.Id,
+            SellerEmail = seller.Email,
+            BusinessName = seller.BusinessName,
+            IsApproved = isApproved,
+            Reason = reason,
+            DecidedAt = DateTime.UtcNow
+        });
+
+        return MapToDto(seller);
+    }
+
+    public async Task<IEnumerable<SellerDto>> GetAllByStatusAsync(string status)
+    {
+        SellerStatus? statusFilter = string.IsNullOrEmpty(status)
+            ? null
+            : Enum.TryParse<SellerStatus>(status, true, out var parsed) ? parsed : null;
+        var sellers = await _sellers.GetAllAsync(statusFilter);
+        return sellers.Select(MapToDto);
     }
 
     private static List<string> GenerateKeywords(string title, string category)

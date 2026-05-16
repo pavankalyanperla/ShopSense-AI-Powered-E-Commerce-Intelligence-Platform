@@ -1,10 +1,11 @@
-﻿using Serilog;
+using Serilog;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SellerService.Infrastructure.Data;
 using SellerService.Infrastructure.Repositories;
+using SellerService.Infrastructure.Messaging;
 using SellerService.Application.Services;
 using SellerService.Application.Interfaces;
 using SellerService.Domain.Interfaces;
@@ -49,6 +50,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
 builder.Services.AddScoped<IKycVerificationService, KycVerificationService>();
+builder.Services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
 builder.Services.AddScoped<ISellerService, SellerService.Application.Services.SellerService>();
 
 builder.Services.AddHealthChecks()

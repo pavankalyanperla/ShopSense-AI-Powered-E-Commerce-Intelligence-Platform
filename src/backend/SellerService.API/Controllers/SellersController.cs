@@ -61,9 +61,11 @@ public class SellersController : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<IEnumerable<SellerDto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<SellerDto>>> GetAll([FromQuery] string? status = null)
     {
-        var sellers = await _sellerService.GetAllAsync();
+        var sellers = string.IsNullOrEmpty(status)
+            ? await _sellerService.GetAllAsync()
+            : await _sellerService.GetAllByStatusAsync(status);
         return Ok(sellers);
     }
 
@@ -121,4 +123,19 @@ public class SellersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("{id}/kyc/decision")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<SellerDto>> MakeKycDecision(Guid id, [FromBody] KycDecisionRequest request)
+    {
+        var seller = await _sellerService.MakeKycDecisionAsync(id, request.IsApproved, request.Reason);
+        if (seller == null)
+            return NotFound();
+
+        _logger.LogInformation("KYC decision for seller {SellerId}: {Decision}", id,
+            request.IsApproved ? "Approved" : "Rejected");
+        return Ok(seller);
+    }
 }
+
+public record KycDecisionRequest(bool IsApproved, string? Reason);
