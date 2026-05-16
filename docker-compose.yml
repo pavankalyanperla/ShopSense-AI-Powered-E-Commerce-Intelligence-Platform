@@ -161,9 +161,14 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_SellerDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
       - Jwt__Secret=${JWT_SECRET}
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
       - ASPNETCORE_URLS=http://+:5500
     depends_on:
       sqlserver:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     networks:
       - shopsense-network

@@ -158,6 +158,7 @@ export class AdminLayoutComponent {
     { label: 'KYC Review', icon: 'pi pi-id-card', route: '/admin/kyc', badge: '' },
     { label: 'Fraud Alerts', icon: 'pi pi-shield', route: '/admin/fraud', badge: '' },
     { label: 'Coupons', icon: 'pi pi-tag', route: '/admin/coupons' },
+    { label: 'Notifications', icon: 'pi pi-bell', route: '/admin/notifications' },
     { label: 'Reviews', icon: 'pi pi-star', route: '/admin/reviews' },
     { label: 'Reports', icon: 'pi pi-chart-bar', route: '/admin/reports' }
   ];

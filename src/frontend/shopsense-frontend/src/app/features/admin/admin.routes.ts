@@ -22,6 +22,10 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'coupons',
         loadComponent: () => import('./coupons/admin-coupons.component').then(m => m.AdminCouponsComponent)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () => import('./notifications/admin-notifications.component').then(m => m.AdminNotificationsComponent)
       }
     ]
   }
