@@ -170,7 +170,8 @@ namespace SellerService.Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CommissionRate")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -205,14 +206,9 @@ namespace SellerService.Infrastructure.Migrations
                     b.Property<Guid>("SellerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SellerId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("SellerId");
-
-                    b.HasIndex("SellerId1");
 
                     b.ToTable("SellerEarnings");
                 });
@@ -230,15 +226,9 @@ namespace SellerService.Infrastructure.Migrations
 
             modelBuilder.Entity("SellerService.Domain.Entities.SellerEarning", b =>
                 {
-                    b.HasOne("SellerService.Domain.Entities.Seller", null)
+                    b.HasOne("SellerService.Domain.Entities.Seller", "Seller")
                         .WithMany("Earnings")
                         .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SellerService.Domain.Entities.Seller", "Seller")
-                        .WithMany()
-                        .HasForeignKey("SellerId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

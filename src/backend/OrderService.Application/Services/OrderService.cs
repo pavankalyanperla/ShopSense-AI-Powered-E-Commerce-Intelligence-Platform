@@ -303,7 +303,31 @@ public class OrderService : IOrderService
             throw new Exception("Order cannot be cancelled at this stage");
         }
 
-        return await UpdateOrderStatusAsync(orderId, OrderStatus.Cancelled, "Cancelled by customer");
+        var now = DateTime.UtcNow;
+        order.Status = OrderStatus.Cancelled;
+        order.UpdatedAt = now;
+
+        await _orderRepository.UpdateStatusAsync(orderId, OrderStatus.Cancelled, now, new OrderStatusHistory
+        {
+            OrderId = orderId,
+            Status = OrderStatus.Cancelled,
+            Note = "Cancelled by customer",
+            ChangedAt = now,
+            ChangedBy = "System"
+        });
+
+        await _messagePublisher.PublishAsync("order.status", "order.status", new
+        {
+            OrderId = order.Id,
+            OrderNumber = order.OrderNumber,
+            Status = OrderStatus.Cancelled.ToString(),
+            CustomerId = order.CustomerId,
+            CustomerEmail = order.CustomerEmail,
+            Remarks = "Cancelled by customer",
+            UpdatedAt = order.UpdatedAt
+        });
+
+        return MapToOrderDto(order);
     }
 
     private OrderDto MapToOrderDto(Order order)

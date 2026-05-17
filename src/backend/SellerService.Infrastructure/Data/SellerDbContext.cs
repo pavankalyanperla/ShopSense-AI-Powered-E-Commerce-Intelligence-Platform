@@ -34,7 +34,7 @@ public class SellerDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasMany(e => e.Earnings)
-                .WithOne()
+                .WithOne(e => e.Seller)
                 .HasForeignKey(e => e.SellerId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

@@ -12,5 +12,6 @@ public interface IOrderRepository
     Task<int> CountByCustomerIdAsync(Guid customerId);
     Task AddAsync(Order order);
     Task UpdateAsync(Order order);
+    Task UpdateStatusAsync(Guid orderId, OrderStatus newStatus, DateTime updatedAt, OrderStatusHistory historyEntry);
     Task SaveChangesAsync();
 }

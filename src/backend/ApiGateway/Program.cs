@@ -20,7 +20,7 @@ var app = builder.Build();
 
 app.UseCors("AllowAngular");
 
-app.MapHealthChecks("/health");
+app.UseHealthChecks("/health");
 
 await app.UseOcelot();
 

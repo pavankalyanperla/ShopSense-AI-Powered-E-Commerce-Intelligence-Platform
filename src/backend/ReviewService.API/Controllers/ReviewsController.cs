@@ -14,7 +14,7 @@ public class ReviewsController : ControllerBase
 
     public ReviewsController(IReviewService reviews) => _reviews = reviews;
 
-    private Guid UserId => Guid.Parse(User.FindFirstValue(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)!);
+    private Guid UserId => Guid.Parse(User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier)!);
     private string UserName => User.FindFirstValue("fullName") ?? "Customer";
 
     [HttpGet("product/{productId:guid}")]

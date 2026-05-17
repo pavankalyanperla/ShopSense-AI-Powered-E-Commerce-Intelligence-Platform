@@ -11,5 +11,6 @@ public interface ISellerRepository
     Task<bool> ExistsAsync(Guid userId);
     Task AddAsync(Seller seller);
     Task UpdateAsync(Seller seller);
+    Task SubmitKycDocumentAsync(Guid sellerId, KycDocument kycDoc, SellerStatus newStatus, string? rejectionReason, DateTime? approvedAt);
     Task SaveChangesAsync();
 }

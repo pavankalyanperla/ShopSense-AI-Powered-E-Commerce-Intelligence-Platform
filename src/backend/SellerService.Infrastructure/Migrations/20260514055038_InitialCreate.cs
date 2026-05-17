@@ -73,12 +73,11 @@ namespace SellerService.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SellerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SellerId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderItemId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     GrossAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CommissionRate = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CommissionRate = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false),
                     CommissionAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     NetAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     PayoutStatus = table.Column<int>(type: "int", nullable: false),
@@ -94,12 +93,6 @@ namespace SellerService.Infrastructure.Migrations
                         principalTable: "Sellers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SellerEarnings_Sellers_SellerId1",
-                        column: x => x.SellerId1,
-                        principalTable: "Sellers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -112,11 +105,6 @@ namespace SellerService.Infrastructure.Migrations
                 name: "IX_SellerEarnings_SellerId",
                 table: "SellerEarnings",
                 column: "SellerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SellerEarnings_SellerId1",
-                table: "SellerEarnings",
-                column: "SellerId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sellers_UserId",

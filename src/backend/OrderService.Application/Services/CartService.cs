@@ -27,7 +27,7 @@ public class CartService : ICartService
     {
         // Fetch product details from ProductService
         var httpClient = _httpClientFactory.CreateClient("ProductService");
-        var response = await httpClient.GetAsync($"/api/products/{request.ProductId}");
+        var response = await httpClient.GetAsync($"/api/v1/products/{request.ProductId}");
         
         if (!response.IsSuccessStatusCode)
         {
@@ -39,9 +39,9 @@ public class CartService : ICartService
 
         // Extract product details
         var productName = productData.GetProperty("name").GetString() ?? "";
-        var productImageUrl = productData.GetProperty("imageUrl").GetString();
-        var unitPrice = productData.GetProperty("price").GetDecimal();
-        var stock = productData.GetProperty("stock").GetInt32();
+        var productImageUrl = productData.TryGetProperty("primaryImageUrl", out var imgProp) ? imgProp.GetString() : productData.TryGetProperty("imageUrl", out var imgProp2) ? imgProp2.GetString() : null;
+        var unitPrice = productData.TryGetProperty("discountedPrice", out var dp) ? dp.GetDecimal() : productData.GetProperty("basePrice").GetDecimal();
+        var stock = productData.GetProperty("stockQuantity").GetInt32();
         var sellerName = productData.GetProperty("sellerName").GetString() ?? "";
         var sellerId = productData.GetProperty("sellerId").GetGuid();
 

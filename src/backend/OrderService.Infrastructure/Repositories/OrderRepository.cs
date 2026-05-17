@@ -109,7 +109,18 @@ public class OrderRepository : IOrderRepository
 
     public async Task UpdateAsync(Order order)
     {
-        _context.Orders.Update(order);
+        _context.Entry(order).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateStatusAsync(Guid orderId, OrderStatus newStatus, DateTime updatedAt, OrderStatusHistory historyEntry)
+    {
+        await _context.Orders
+            .Where(o => o.Id == orderId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(o => o.Status, newStatus)
+                .SetProperty(o => o.UpdatedAt, updatedAt));
+        await _context.OrderStatusHistories.AddAsync(historyEntry);
         await _context.SaveChangesAsync();
     }
 

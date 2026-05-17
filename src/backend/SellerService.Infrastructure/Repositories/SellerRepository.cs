@@ -58,8 +58,21 @@ public class SellerRepository : ISellerRepository
 
     public async Task UpdateAsync(Seller seller)
     {
-        _context.Sellers.Update(seller);
+        _context.Entry(seller).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         await Task.CompletedTask;
+    }
+
+    public async Task SubmitKycDocumentAsync(Guid sellerId, KycDocument kycDoc, SellerStatus newStatus, string? rejectionReason, DateTime? approvedAt)
+    {
+        await _context.Sellers
+            .Where(s => s.Id == sellerId)
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(x => x.Status, newStatus)
+                .SetProperty(x => x.RejectionReason, rejectionReason)
+                .SetProperty(x => x.ApprovedAt, approvedAt)
+                .SetProperty(x => x.UpdatedAt, DateTime.UtcNow));
+        await _context.KycDocuments.AddAsync(kycDoc);
+        await _context.SaveChangesAsync();
     }
 
     public async Task SaveChangesAsync()

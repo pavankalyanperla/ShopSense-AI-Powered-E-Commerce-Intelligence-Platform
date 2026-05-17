@@ -85,22 +85,26 @@ public class SellerService : ISellerService
             VerifiedAt = (aadhaarValid && panValid && gstValid) ? DateTime.UtcNow : null
         };
 
-        seller.KycDocument = kycDoc;
-
         // Update seller status based on KYC result
+        SellerStatus newStatus;
+        string? rejectionReason = null;
+        DateTime? approvedAt = null;
         if (aadhaarValid && panValid && gstValid)
         {
-            seller.Status = SellerStatus.Approved;
-            seller.ApprovedAt = DateTime.UtcNow;
+            newStatus = SellerStatus.Approved;
+            approvedAt = DateTime.UtcNow;
+            seller.Status = newStatus;
+            seller.ApprovedAt = approvedAt;
         }
         else
         {
-            seller.Status = SellerStatus.Rejected;
-            seller.RejectionReason = "KYC verification failed";
+            newStatus = SellerStatus.Rejected;
+            rejectionReason = "KYC verification failed";
+            seller.Status = newStatus;
+            seller.RejectionReason = rejectionReason;
         }
 
-        await _sellers.UpdateAsync(seller);
-        await _sellers.SaveChangesAsync();
+        await _sellers.SubmitKycDocumentAsync(sellerId, kycDoc, newStatus, rejectionReason, approvedAt);
 
         return MapToDto(seller);
     }

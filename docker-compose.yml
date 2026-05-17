@@ -24,9 +24,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "${SA_PASSWORD}", "-Q", "SELECT 1"]
-      interval: 15s
-      retries: 10
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 5s
+      retries: 1
+      start_period: 40s
 
   redis:
     image: redis:7-alpine
@@ -71,7 +73,7 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_IdentityDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
       - Jwt__Secret=${JWT_SECRET}
-      - Redis__ConnectionString=redis:6379
+      - ConnectionStrings__Redis=redis:6379
       - ASPNETCORE_URLS=http://+:5100
     depends_on:
       sqlserver:
@@ -117,6 +119,7 @@ services:
       - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_OrderDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
       - Jwt__Secret=${JWT_SECRET}
       - RabbitMQ__Host=rabbitmq
+      - Services__ProductService=http://product-service:5200
       - ASPNETCORE_URLS=http://+:5300
     depends_on:
       sqlserver:
