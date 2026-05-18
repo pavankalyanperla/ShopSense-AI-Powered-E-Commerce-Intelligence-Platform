@@ -26,3 +26,14 @@ appsettings.Development.json
 # Misc
 .DS_Store
 Thumbs.db
+
+# ML model artifacts and datasets
+src/ml/*/app/models/*.pkl
+src/ml/*/app/models/*.joblib
+src/ml/*/app/models/*.json
+src/ml/*/data/*.csv
+src/ml/*/data/*.zip
+
+# Keep directory structure
+!src/ml/*/app/models/.gitkeep
+!src/ml/*/data/.gitkeep

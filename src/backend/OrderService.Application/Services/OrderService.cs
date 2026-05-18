@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using OrderService.Application.DTOs;
 using OrderService.Application.Interfaces;
 using OrderService.Domain.Entities;
@@ -12,6 +13,8 @@ public class OrderService : IOrderService
     private readonly IAddressRepository _addressRepository;
     private readonly ICouponRepository _couponRepository;
     private readonly IMessagePublisher _messagePublisher;
+    private readonly IFraudClient _fraudClient;
+    private readonly ILogger<OrderService> _logger;
     private const decimal FREE_DELIVERY_THRESHOLD = 499m;
     private const decimal DELIVERY_CHARGE = 40m;
 
@@ -20,13 +23,17 @@ public class OrderService : IOrderService
         ICartRepository cartRepository,
         IAddressRepository addressRepository,
         ICouponRepository couponRepository,
-        IMessagePublisher messagePublisher)
+        IMessagePublisher messagePublisher,
+        IFraudClient fraudClient,
+        ILogger<OrderService> logger)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _addressRepository = addressRepository;
         _couponRepository = couponRepository;
         _messagePublisher = messagePublisher;
+        _fraudClient = fraudClient;
+        _logger = logger;
     }
 
     public async Task<OrderDto> CheckoutAsync(Guid customerId, string customerEmail, string customerName, CheckoutRequest request)
@@ -96,6 +103,29 @@ public class OrderService : IOrderService
 
         decimal totalAmount = subTotal - discountAmount + deliveryCharge;
 
+        // Synchronous fraud check
+        double fraudScore = 0;
+        bool isFraudFlagged = false;
+
+        try
+        {
+            var (score, isFraud, riskLevel) = await _fraudClient.CheckAsync(
+                amount: subTotal,
+                paymentMethod: request.PaymentMethod.ToString(),
+                transactionHour: DateTime.UtcNow.Hour,
+                quantity: cartItems.Sum(c => c.Quantity)
+            );
+            fraudScore = score;
+            isFraudFlagged = isFraud;
+
+            if (isFraud)
+                _logger.LogWarning("FRAUD DETECTED — Score: {Score}, Customer: {CustomerId}", score, customerId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Fraud check failed — proceeding with order");
+        }
+
         // Generate order number: SS{yyyyMMdd}{random4digits}
         string orderNumber = $"SS{DateTime.UtcNow:yyyyMMdd}{new Random().Next(1000, 9999)}";
 
@@ -106,7 +136,7 @@ public class OrderService : IOrderService
             CustomerId = customerId,
             CustomerEmail = customerEmail,
             CustomerName = customerName,
-            Status = OrderStatus.Placed,
+            Status = isFraudFlagged ? OrderStatus.FraudHold : OrderStatus.Placed,
             PaymentMethod = request.PaymentMethod,
             PaymentStatus = request.PaymentMethod == PaymentMethod.COD ? PaymentStatus.Pending : PaymentStatus.Paid,
             SubTotal = subTotal,
@@ -115,6 +145,8 @@ public class OrderService : IOrderService
             TotalAmount = totalAmount,
             CouponId = couponId,
             CouponCode = couponCode,
+            FraudScore = fraudScore,
+            IsFraudFlagged = isFraudFlagged,
             DeliveryAddressId = request.DeliveryAddressId,
             DeliveryAddress = address,
             Items = cartItems.Select(ci => new OrderItem

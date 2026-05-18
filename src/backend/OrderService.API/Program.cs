@@ -10,6 +10,7 @@ using OrderService.Application.Services;
 using OrderService.Domain.Interfaces;
 using OrderService.Infrastructure.Repositories;
 using OrderService.Infrastructure.Messaging;
+using OrderService.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,13 @@ builder.Services.AddDbContext<OrderDbContext>(options =>
 builder.Services.AddHttpClient("ProductService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["Services:ProductService"] ?? "http://localhost:5003");
+});
+
+// HttpClient for FraudService
+builder.Services.AddHttpClient<IFraudClient, FraudClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:FraudService"] ?? "http://localhost:8001");
+    client.Timeout = TimeSpan.FromSeconds(3);
 });
 
 // Repositories

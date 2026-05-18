@@ -120,6 +120,7 @@ services:
       - Jwt__Secret=${JWT_SECRET}
       - RabbitMQ__Host=rabbitmq
       - Services__ProductService=http://product-service:5200
+      - Services__FraudService=http://fraud-service:8001
       - ASPNETCORE_URLS=http://+:5300
     depends_on:
       sqlserver:
