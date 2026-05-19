@@ -249,16 +249,19 @@ services:
     ports:
       - "8002:8002"
     environment:
-      - REDIS_URL=redis://redis:6379
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       redis:
         condition: service_healthy
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
-      interval: 20s
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 30s
+      timeout: 10s
       retries: 5
+      start_period: 60s
 
   sentiment-service:
     build: ./src/ml/SentimentService
