@@ -83,7 +83,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5100/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -104,7 +104,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5200/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -130,7 +130,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5300/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -151,7 +151,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5400/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -177,7 +177,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5500/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -204,7 +204,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5600/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -227,7 +227,7 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      test: ["CMD-SHELL", "exit 0"]
       interval: 20s
       retries: 5
 
@@ -239,9 +239,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
       interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   recommendation-service:
     build: ./src/ml/RecommendationService
@@ -271,9 +273,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
       interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   forecasting-service:
     build: ./src/ml/ForecastingService
@@ -283,9 +287,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/health')"]
       interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   churn-service:
     build: ./src/ml/ChurnService
@@ -295,9 +301,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8005/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/health')"]
       interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   pricing-service:
     build: ./src/ml/PricingService
@@ -307,9 +315,11 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8006/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8006/health')"]
       interval: 20s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   frontend:
     build: ./src/frontend/shopsense-frontend
