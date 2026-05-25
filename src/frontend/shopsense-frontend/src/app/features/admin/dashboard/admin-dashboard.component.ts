@@ -14,38 +14,40 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
   template: `
     <div style="padding:0">
 
-      <!-- Header -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;
-                  margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">
+      <!-- ── Header ── -->
+      <div style="display:flex !important;justify-content:space-between;
+                  align-items:flex-start;margin-bottom:1.25rem;
+                  flex-wrap:wrap;gap:.75rem;
+                  visibility:visible !important;opacity:1 !important">
         <div>
-          <h1 style="font-size:1.25rem;font-weight:600;
-                     color:var(--p-surface-900,#111827);margin:0 0 4px">
+          <h2 style="font-size:1.25rem;font-weight:600;color:#111827 !important;
+                     margin:0 0 4px;visibility:visible !important">
             Admin intelligence dashboard
-          </h1>
-          <p style="font-size:.75rem;color:var(--p-surface-500,#6b7280);
-                    margin:0;display:flex;align-items:center;gap:4px">
-            <span style="width:7px;height:7px;border-radius:50%;
-                         display:inline-block"
+          </h2>
+          <p style="font-size:.75rem;color:#6b7280;margin:0;
+                    display:flex;align-items:center;gap:4px">
+            <span style="display:inline-block;width:7px;height:7px;
+                         border-radius:50%;vertical-align:middle"
               [style.background]="data?.isLive ? '#639922' : '#EF9F27'">
             </span>
-            {{ data?.isLive
-               ? 'Live data · Updated ' + (data?.lastUpdated | date:'HH:mm:ss')
-               : 'Mock data · Click Refresh for live' }}
-            &nbsp;·&nbsp; All 6 ML services wired
+            {{ data?.isLive ? 'Live data' : 'Mock data · Click Refresh for live' }}
+            &nbsp;&middot;&nbsp; All 6 ML services wired
           </p>
         </div>
         <button
-          style="padding:.375rem .875rem;border:1px solid #d1d5db;border-radius:8px;
-                 background:transparent;cursor:pointer;font-size:.8rem;
-                 display:flex;align-items:center;gap:6px;color:#4b5563"
+          (click)="onRefresh()"
           [disabled]="refreshing"
-          (click)="onRefresh()">
-          <i [class]="'pi ' + (refreshing ? 'pi-spin pi-spinner' : 'pi-refresh')"></i>
+          style="display:flex !important;align-items:center;gap:6px;
+                 padding:.4rem .875rem;border:1px solid #d1d5db;
+                 border-radius:8px;background:#ffffff;cursor:pointer;
+                 font-size:.8rem;color:#374151;
+                 visibility:visible !important">
+          <i [class]="refreshing ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"></i>
           {{ refreshing ? 'Fetching...' : 'Refresh from ML APIs' }}
         </button>
       </div>
 
-      <!-- KPI Cards -->
+      <!-- ── KPI Cards ── -->
       <p style="font-size:.7rem;font-weight:500;letter-spacing:.07em;
                 text-transform:uppercase;color:#9ca3af;margin:0 0 .625rem">
         Platform overview
@@ -67,10 +69,10 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
         </div>
       </div>
 
-      <!-- Row 1: Forecast + States -->
+      <!-- ── Row 1: Forecast + States ── -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
 
-        <!-- Forecast CSS bars -->
+        <!-- Forecast bars -->
         <div style="background:#fff;border:1px solid #f3f4f6;border-radius:12px;
                     padding:1rem 1.25rem">
           <div style="display:flex;justify-content:space-between;align-items:center;
@@ -83,33 +85,26 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
             <span style="font-size:.7rem;padding:3px 8px;border-radius:4px;
                          background:#f9fafb;color:#6b7280">Holt-Winters</span>
           </div>
-          <div style="display:flex;align-items:flex-end;gap:2px;height:120px;
-                      padding-bottom:4px">
+          <div style="display:flex;align-items:flex-end;gap:2px;height:120px;padding-bottom:4px">
             <div *ngFor="let p of getForecastBars()"
-                 style="flex:1;border-radius:2px 2px 0 0;min-width:4px;
-                        transition:height .3s ease"
+                 style="flex:1;border-radius:2px 2px 0 0;min-width:4px;transition:height .3s ease"
                  [style.height]="p.heightPct + '%'"
                  [style.background]="p.isWeekend ? '#185FA5' : '#85B7EB'"
                  [title]="p.date + ': ₹' + (p.value/100000).toFixed(1) + 'L'">
             </div>
           </div>
           <div style="display:flex;gap:12px;margin-top:6px">
-            <span style="display:flex;align-items:center;gap:4px;
-                         font-size:.68rem;color:#6b7280">
-              <span style="width:10px;height:8px;background:#85B7EB;
-                           border-radius:2px;display:inline-block"></span>Weekday
+            <span style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:#6b7280">
+              <span style="width:10px;height:8px;background:#85B7EB;border-radius:2px;display:inline-block"></span>Weekday
             </span>
-            <span style="display:flex;align-items:center;gap:4px;
-                         font-size:.68rem;color:#6b7280">
-              <span style="width:10px;height:8px;background:#185FA5;
-                           border-radius:2px;display:inline-block"></span>Weekend peak
+            <span style="display:flex;align-items:center;gap:4px;font-size:.68rem;color:#6b7280">
+              <span style="width:10px;height:8px;background:#185FA5;border-radius:2px;display:inline-block"></span>Weekend peak
             </span>
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px;
-                      font-size:.7rem;color:#6b7280;border-top:1px solid #f3f4f6;
-                      padding-top:8px">
-            <span>Peak: &#8377;{{ formatLakh(data?.forecast?.peak_revenue || 155000) }}L</span>
-            <span>Total: <strong>&#8377;{{ formatLakh(data?.forecast?.total_predicted_revenue || 38200000) }}L</strong></span>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:.7rem;
+                      color:#6b7280;border-top:1px solid #f3f4f6;padding-top:8px">
+            <span>Peak: {{ rupee(formatLakh(data?.forecast?.peak_revenue || 155000)) }}L</span>
+            <span>Total: <strong>{{ rupee(formatLakh(data?.forecast?.total_predicted_revenue || 38200000)) }}L</strong></span>
           </div>
         </div>
 
@@ -138,16 +133,13 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
                 [style.background]="s.color">
               </div>
             </div>
-            <span style="font-size:.7rem;font-weight:600;min-width:34px;
-                         text-align:right;color:#1f2937">
-              &#8377;{{ (s.value/100000).toFixed(0) }}L
+            <span style="font-size:.7rem;font-weight:600;min-width:38px;text-align:right;color:#1f2937">
+              {{ rupee((s.value/100000).toFixed(0)) }}L
             </span>
           </div>
           <div style="margin-top:10px;background:#f9fafb;border-radius:8px;padding:10px">
             <p style="font-size:1rem;font-weight:600;color:#111827;margin:0 0 2px">53%</p>
-            <p style="font-size:.65rem;color:#6b7280;margin:0 0 4px">
-              revenue from top 3 states
-            </p>
+            <p style="font-size:.65rem;color:#6b7280;margin:0 0 4px">revenue from top 3 states</p>
             <p style="font-size:.6rem;color:#9ca3af;margin:0">
               Opportunity: MP, Bihar, Odisha are underserved
             </p>
@@ -155,7 +147,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
         </div>
       </div>
 
-      <!-- Row 2: Fraud + Sentiment -->
+      <!-- ── Row 2: Fraud + Sentiment ── -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
 
         <!-- Fraud Alerts -->
@@ -182,7 +174,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
                 {{ alert.orderId }}
               </p>
               <p style="font-size:.65rem;color:#9ca3af;margin:0">
-                &#8377;{{ alert.amount | number:'1.0-0' }}
+                {{ rupee(alert.amount | number:'1.0-0') }}
                 &middot; {{ alert.paymentMethod }}
                 &middot; {{ alert.time }}
               </p>
@@ -199,7 +191,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
           <div style="display:flex;justify-content:space-between;padding-top:.625rem;
                       font-size:.7rem;color:#9ca3af">
             <span>247 flagged today</span>
-            <span>&#8377;38.2L protected</span>
+            <span>{{ rupee('38.2L') }} protected</span>
           </div>
         </div>
 
@@ -218,8 +210,27 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
               TF-IDF &middot; Acc {{ (data?.sentiment?.accuracy || 0.9668).toFixed(4) }}
             </span>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);
-                      gap:8px;margin-bottom:12px">
+
+          <!-- CSS conic-gradient donut -->
+          <div style="display:flex;justify-content:center;margin-bottom:14px">
+            <div style="position:relative;width:100px;height:100px">
+              <div [style]="getSentimentDonutStyle()"
+                   style="width:100px;height:100px;border-radius:50%">
+              </div>
+              <div style="position:absolute;top:50%;left:50%;
+                          transform:translate(-50%,-50%);
+                          width:62px;height:62px;border-radius:50%;
+                          background:#ffffff;display:flex;
+                          align-items:center;justify-content:center">
+                <span style="font-size:.9rem;font-weight:600;color:#065F46">
+                  {{ data?.sentiment?.positivePct || 78 }}%
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Big numbers -->
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
             <div style="text-align:center;background:#D1FAE5;border-radius:8px;padding:10px 6px">
               <p style="font-size:1.4rem;font-weight:600;color:#065F46;margin:0">
                 {{ data?.sentiment?.positivePct || 78 }}%
@@ -239,6 +250,8 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
               <p style="font-size:.65rem;color:#991B1B;margin:0">Negative</p>
             </div>
           </div>
+
+          <!-- Bars -->
           <div *ngFor="let s of getSentimentBars()"
                style="display:flex;align-items:center;gap:8px;padding:4px 0">
             <span style="font-size:.7rem;min-width:56px;color:#6b7280">{{ s.label }}</span>
@@ -253,6 +266,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
               {{ s.pct }}%
             </span>
           </div>
+
           <div style="margin-top:10px;padding-top:8px;border-top:1px solid #f3f4f6;
                       display:flex;flex-wrap:wrap;gap:6px">
             <span style="font-size:.65rem;padding:3px 8px;border-radius:4px;
@@ -265,7 +279,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
         </div>
       </div>
 
-      <!-- Row 3: Churn + Pricing -->
+      <!-- ── Row 3: Churn + Pricing ── -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
 
         <!-- Churn CityTier -->
@@ -281,6 +295,26 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
             <span style="font-size:.7rem;padding:3px 8px;border-radius:4px;
                          background:#f9fafb;color:#6b7280">XGBoost &middot; ROC 0.9857</span>
           </div>
+
+          <!-- CSS conic-gradient donut -->
+          <div style="display:flex;justify-content:center;margin-bottom:12px">
+            <div style="position:relative;width:90px;height:90px">
+              <div [style]="getChurnDonutStyle()"
+                   style="width:90px;height:90px;border-radius:50%">
+              </div>
+              <div style="position:absolute;top:50%;left:50%;
+                          transform:translate(-50%,-50%);
+                          width:56px;height:56px;border-radius:50%;
+                          background:#ffffff;display:flex;
+                          align-items:center;justify-content:center;
+                          flex-direction:column">
+                <span style="font-size:.75rem;font-weight:600;color:#1f2937">16.8%</span>
+                <span style="font-size:.55rem;color:#9ca3af">avg churn</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tier bars -->
           <div *ngFor="let tier of (data?.churnByTier || [])"
                style="display:flex;align-items:center;gap:8px;padding:6px 0;
                       border-bottom:1px solid #f9fafb">
@@ -338,7 +372,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
             </div>
             <span style="font-size:.75rem;font-weight:600;min-width:56px;
                          text-align:right;color:#1f2937">
-              &#8377;{{ b.avg_price | number:'1.0-0' }}
+              {{ rupee(b.avg_price | number:'1.0-0') }}
             </span>
           </div>
           <div style="margin-top:10px;padding-top:8px;border-top:1px solid #f3f4f6">
@@ -356,7 +390,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
         </div>
       </div>
 
-      <!-- Row 4: Recommendations -->
+      <!-- ── Row 4: Recommendations ── -->
       <div style="background:#fff;border:1px solid #f3f4f6;border-radius:12px;
                   padding:1rem 1.25rem;margin-bottom:1rem">
         <div style="display:flex;justify-content:space-between;align-items:center;
@@ -418,6 +452,12 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  // ── helpers ──
+
+  rupee(val: string | number | null): string {
+    return '₹' + (val ?? '');
+  }
+
   formatLakh(n: number): string {
     return (n / 100000).toFixed(1);
   }
@@ -426,12 +466,38 @@ export class AdminDashboardComponent implements OnInit {
     return (n / 10000000).toFixed(1) + 'Cr';
   }
 
+  // ── donut styles ──
+
+  getSentimentDonutStyle(): string {
+    const pos = this.data?.sentiment?.positivePct ?? 78;
+    const neu = this.data?.sentiment?.neutralPct ?? 12;
+    return `background: conic-gradient(
+      #639922 0% ${pos}%,
+      #888780 ${pos}% ${pos + neu}%,
+      #E24B4A ${pos + neu}% 100%
+    )`;
+  }
+
+  getChurnDonutStyle(): string {
+    const t1 = 14.5, t2 = 19.8, t3 = 21.4;
+    const total = t1 + t2 + t3;
+    const p1 = (t1 / total) * 100;
+    const p2 = (t2 / total) * 100;
+    return `background: conic-gradient(
+      #378ADD 0% ${p1.toFixed(1)}%,
+      #EF9F27 ${p1.toFixed(1)}% ${(p1 + p2).toFixed(1)}%,
+      #E24B4A ${(p1 + p2).toFixed(1)}% 100%
+    )`;
+  }
+
+  // ── data methods ──
+
   getKpis() {
     const d = this.data;
     return [
       {
         label: 'Total revenue',
-        value: '&#8377;' + this.formatCrore(d?.salesSummary?.total_revenue || 42000000),
+        value: this.rupee(this.formatCrore(d?.salesSummary?.total_revenue || 42000000)),
         sub: (d?.salesSummary?.total_orders || 128975).toLocaleString() + ' orders',
         badge: '+12% MoM', badgeBg: '#D1FAE5', badgeColor: '#065F46'
       },
@@ -463,7 +529,7 @@ export class AdminDashboardComponent implements OnInit {
       },
       {
         label: '30-day forecast',
-        value: '&#8377;' + this.formatLakh(d?.forecast?.total_predicted_revenue || 38200000) + 'L',
+        value: this.rupee(this.formatLakh(d?.forecast?.total_predicted_revenue || 38200000)) + 'L',
         sub: 'predicted revenue',
         badge: 'Holt-Winters', badgeBg: '#DBEAFE', badgeColor: '#1E40AF'
       }
@@ -501,7 +567,7 @@ export class AdminDashboardComponent implements OnInit {
     const s = this.data?.sentiment;
     return [
       { label: 'Positive', pct: s?.positivePct || 78, color: '#639922', textColor: '#3B6D11' },
-      { label: 'Neutral', pct: s?.neutralPct || 12, color: '#888780', textColor: '#5F5E5A' },
+      { label: 'Neutral',  pct: s?.neutralPct  || 12, color: '#888780', textColor: '#5F5E5A' },
       { label: 'Negative', pct: s?.negativePct || 10, color: '#E24B4A', textColor: '#A32D2D' }
     ];
   }
@@ -515,8 +581,8 @@ export class AdminDashboardComponent implements OnInit {
     const s = this.data?.recommendationStats;
     return [
       { value: ((s?.catalog_size || 50000) / 1000).toFixed(0) + 'K', label: 'Products catalogued' },
-      { value: '5,000', label: 'Users trained' },
-      { value: '61.7K', label: 'Interactions' },
+      { value: '5,000',  label: 'Users trained' },
+      { value: '61.7K',  label: 'Interactions' },
       { value: '30 min', label: 'Redis TTL' },
       { value: s?.metrics?.rmse?.toFixed(4) || '0.5252', label: 'Train RMSE' }
     ];
