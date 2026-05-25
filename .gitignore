@@ -33,6 +33,7 @@ src/ml/*/app/models/*.joblib
 src/ml/*/app/models/*.json
 src/ml/*/data/*.csv
 src/ml/*/data/*.zip
+src/ml/*/data/*.xlsx
 
 # Keep directory structure
 !src/ml/*/app/models/.gitkeep
