@@ -13,9 +13,9 @@ import {
   providedIn: 'root'
 })
 export class ProductService {
-  private readonly API_URL = 'http://localhost:5000/api/products';
-  private readonly CATEGORIES_URL = 'http://localhost:5000/api/categories';
-  private readonly WISHLIST_URL = 'http://localhost:5000/api/wishlist';
+  private readonly API_URL = 'http://localhost:5000/api/v1/products';
+  private readonly CATEGORIES_URL = 'http://localhost:5000/api/v1/categories';
+  private readonly WISHLIST_URL = 'http://localhost:5000/api/v1/wishlist';
 
   private wishlistSubject = new BehaviorSubject<Set<string>>(new Set());
   public wishlist$ = this.wishlistSubject.asObservable();

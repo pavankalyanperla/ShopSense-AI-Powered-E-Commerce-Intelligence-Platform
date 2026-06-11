@@ -7,7 +7,7 @@ import { ReviewDto, CreateReviewRequest } from '../models/review.models';
   providedIn: 'root'
 })
 export class ReviewService {
-  private readonly API_URL = 'http://localhost:5000/api/reviews';
+  private readonly API_URL = 'http://localhost:5000/api/v1/reviews';
 
   constructor(private http: HttpClient) {}
 

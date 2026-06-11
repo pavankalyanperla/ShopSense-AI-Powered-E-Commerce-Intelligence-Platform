@@ -15,8 +15,8 @@ import {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:5000/api/auth';
-  private readonly USERS_URL = 'http://localhost:5000/api/users';
+  private readonly API_URL = 'http://localhost:5000/api/v1/auth';
+  private readonly USERS_URL = 'http://localhost:5000/api/v1/users';
   private readonly TOKEN_KEY = 'shopsense_token';
   private readonly REFRESH_TOKEN_KEY = 'shopsense_refresh_token';
   private readonly USER_KEY = 'shopsense_user';
