@@ -46,7 +46,6 @@ import { AuthService } from '../../../core/services/auth.service';
     .ss-admin-shell {
       display: flex;
       min-height: 100vh;
-      margin-top: -100px;
     }
     .ss-admin-sidebar {
       width: 240px;
