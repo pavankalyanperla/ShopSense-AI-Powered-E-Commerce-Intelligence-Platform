@@ -1,348 +1,272 @@
-# ShopSense E-Commerce Platform
+# ShopSense — AI-Powered E-Commerce Intelligence Platform
 
-A modern, microservices-based e-commerce platform built with .NET 10.0 and Angular 19.
-
-## 🚀 Quick Start
-
-```powershell
-# Start all backend services (6 terminals)
-cd src/backend/IdentityService.API && dotnet run    # Port 5100
-cd src/backend/ProductService.API && dotnet run     # Port 5200
-cd src/backend/OrderService.API && dotnet run       # Port 5300
-cd src/backend/ReviewService.API && dotnet run      # Port 5400
-cd src/backend/SellerService.API && dotnet run      # Port 5500
-cd src/backend/ApiGateway && dotnet run             # Port 5000
-
-# Start Angular frontend
-cd src/frontend/shopsense-frontend && npm start     # Port 4200
-```
-
-**Access**: http://localhost:5000/swagger (API Gateway)
+Enterprise-grade e-commerce platform with 6 AI/ML microservices for fraud detection, product recommendations, sentiment analysis, sales forecasting, customer churn prediction, and dynamic pricing.
+Built with Angular 21, ASP.NET Core 10, Python FastAPI, and Docker.
 
 ---
 
-## 📚 Documentation
+## Tech Stack
 
-- **[Quick Start Guide](QUICK_START_GUIDE.md)** - Get up and running in 5 minutes
-- **[Complete Implementation](DAYS_COMPLETE.md)** - Full feature documentation
-- **[Database Setup](DATABASE_SETUP_GUIDE.md)** - Database configuration guide
-- **[Service Ports](SERVICE_PORTS_REFERENCE.md)** - Port reference
-
----
-
-## 🏗️ Architecture
-
-### Microservices
-1. **IdentityService** (5100) - Authentication & user management
-2. **ProductService** (5200) - Product catalog & categories
-3. **OrderService** (5300) - Cart, orders, coupons, addresses
-4. **ReviewService** (5400) - Reviews, ratings, sentiment analysis
-5. **SellerService** (5500) - Seller management, KYC, listing coach
-6. **API Gateway** (5000) - Ocelot gateway for routing
-
-### Databases
-- ShopSense_IdentityDB
-- ShopSense_ProductDB
-- ShopSense_OrderDB
-- ShopSense_ReviewDB
-- ShopSense_SellerDB
+| Layer | Technology |
+|---|---|
+| Frontend | Angular 21, PrimeNG Aura, TypeScript |
+| Backend | ASP.NET Core 10, Clean Architecture, Ocelot Gateway |
+| ML/AI | Python FastAPI, XGBoost, TF-IDF, SVD, Holt-Winters, GBR |
+| Database | SQL Server 2022, Redis 7, RabbitMQ 3 |
+| DevOps | Docker Compose (17 containers), GitHub Actions CI/CD |
+| Auth | JWT + BCrypt + OTP Email + Google OAuth + Redis Blacklisting |
 
 ---
 
-## 🎯 Features
+## Architecture
 
-### Customer Features
-- ✅ User registration & authentication (JWT + OTP verification)
-- ✅ Product browsing & search with advanced filters
-- ✅ Shopping cart management with real-time count badge
-- ✅ Order placement & tracking
-- ✅ Product reviews & ratings with sentiment analysis
-- ✅ Wishlist functionality with toggle
-- ✅ Address management
-- ✅ Coupon application
-- ✅ Personalized dashboard with time-based greetings
-- ✅ My reviews page with seller replies
-- ✅ Password strength meter
-- ✅ Responsive design (mobile-first)
-
-### Seller Features
-- ✅ Seller registration portal (business name + phone)
-- ✅ KYC submission form (Aadhaar, PAN, GST, bank details with validation)
-- ✅ Seller dashboard (status banners, earnings cards, quick actions)
-- ✅ AI-powered Listing Coach (0–100 score, sub-score breakdown, SEO keywords, improvement tips)
-- ✅ Product management (add/edit listings, stock status, category filter)
-- ✅ Order management (filter by status, mark Shipped / Delivered, order detail dialog)
-- ✅ Earnings & payouts page (total, pending, this-month KPIs + transaction history)
-- ✅ Reply to customer reviews
-
-### Admin Features
-- ✅ Admin dashboard (KPI cards, recent orders table, pending KYC quick-approve panel)
-- ✅ KYC Review (approve / reject with reason dialog, document status chips, suspend seller)
-- ✅ Order management (search, status filter, inline status transitions)
-- ✅ Coupon management (create / edit / delete coupons with full form dialog)
-- ✅ Dark sidebar navigation layout
-
----
-
-## 🛠️ Technology Stack
-
-**Backend**
-- .NET 10.0
-- Entity Framework Core 10.0.8
-- SQL Server
-- JWT Authentication
-- Ocelot API Gateway
-- Serilog
-
-**Frontend**
-- Angular 19 (Standalone Components)
-- TypeScript 5.7
-- RxJS 7.8
-- PrimeNG Aura Theme
-- Signals API
-- Responsive Design (Mobile-First)
-
-**Tools**
-- Swagger/OpenAPI
-- Docker (optional)
-
----
-
-## 🌐 Frontend Pages
-
-### Public Pages
-- **Landing Page** (`/home`) - Hero section, categories, ML features, featured products
-- **Login** (`/auth/login`) - Two-panel design with brand showcase
-- **Register** (`/auth/register`) - Role selector, password strength, OTP verification
-
-### Customer Portal (Login Required)
-- **Dashboard** (`/customer/dashboard`) - Personalized greeting, KPIs, quick actions
-- **Products** (`/customer/products`) - Advanced filters, sorting, pagination
-- **Product Details** (`/customer/products/:slug`) - Full details, reviews, add to cart
-- **Wishlist** (`/customer/wishlist`) - Saved products with quick actions
-- **Shopping Cart** (`/customer/cart`) - Cart management, coupon application
-- **My Orders** (`/customer/orders`) - Order history and tracking
-- **My Reviews** (`/customer/reviews`) - Customer reviews with sentiment tags
-
-### Seller Portal (Seller Login Required)
-- **Register** (`/seller/register`) - Become a seller (business name + phone)
-- **Dashboard** (`/seller/dashboard`) - KYC status, earnings cards, quick actions, recent transactions
-- **KYC** (`/seller/kyc`) - Submit Aadhaar / PAN / GST / bank with regex validation
-- **AI Listing Coach** (`/seller/listing-coach`) - Score listings 0–100, get improvement suggestions
-- **My Products** (`/seller/products`) - Manage listings, add new product dialog
-- **Orders** (`/seller/orders`) - Filter & fulfill orders, mark Shipped/Delivered
-- **Earnings** (`/seller/earnings`) - Payout summary + full transaction table
-
-### Admin Portal (Admin Login Required)
-- **Dashboard** (`/admin/dashboard`) - Platform KPIs, recent orders, pending KYC quick-approve
-- **KYC Review** (`/admin/kyc`) - Approve / reject / suspend sellers with document chips
-- **Orders** (`/admin/orders`) - Search + filter all orders, inline status transitions
-- **Coupons** (`/admin/coupons`) - Create, edit, delete platform coupons
-
-### Design Highlights
-- **Theme**: PrimeNG Aura with custom ShopSense design tokens
-- **Colors**: Brand Blue (#1F4E79), Light Blue (#2563EB), Indian context
-- **Currency**: ₹ (Indian Rupee)
-- **Responsive**: Mobile-first design (375px+)
-- **Loading**: Skeleton states throughout
-- **Empty States**: Helpful messages with action buttons
-
----
-
-## 📊 API Endpoints
-
-### IdentityService (5100)
 ```
-POST   /api/v1/auth/register
-POST   /api/v1/auth/login
-GET    /api/v1/users/profile
-PUT    /api/v1/users/profile
-```
+┌─────────────────────────────────────────────────────────────┐
+│                    Angular 21 + PrimeNG                     │
+│              Customer | Seller | Admin Portals              │
+└───────────────────────┬─────────────────────────────────────┘
+                        │
+                ┌───────▼────────┐
+                │  Ocelot Gateway │
+                │   (Port 5000)   │
+                └───────┬────────┘
+           ┌────────────┼────────────┐
+           │            │            │
+    ┌──────▼──────┐ ┌───▼───────┐ ┌─▼────────┐
+    │  Identity   │ │  Product  │ │  Order   │
+    │   :5100     │ │   :5200   │ │  :5300   │
+    └─────────────┘ └───────────┘ └──────────┘
+    ┌─────────────┐ ┌───────────┐ ┌──────────┐
+    │   Review    │ │  Seller   │ │ Notific. │
+    │   :5400     │ │   :5500   │ │  :5600   │
+    └─────────────┘ └───────────┘ └──────────┘
+           │            │            │
+    ┌──────▼────────────▼────────────▼──────┐
+    │     SQL Server | Redis | RabbitMQ     │
+    └───────────────────────────────────────┘
 
-### ProductService (5200)
-```
-GET    /api/v1/products
-POST   /api/v1/products
-GET    /api/v1/categories
-POST   /api/v1/categories
-```
-
-### OrderService (5300)
-```
-GET    /api/v1/cart
-POST   /api/v1/cart/items
-POST   /api/v1/orders
-GET    /api/v1/orders
-POST   /api/v1/coupons
-GET    /api/v1/address
-```
-
-### ReviewService (5400)
-```
-POST   /api/v1/reviews
-GET    /api/v1/reviews/product/{id}
-GET    /api/v1/reviews/{id}/summary
-POST   /api/v1/reviews/{id}/reply
-```
-
-### SellerService (5500)
-```
-POST   /api/v1/sellers/register
-POST   /api/v1/sellers/{id}/kyc
-GET    /api/v1/sellers/{id}/earnings
-POST   /api/v1/sellers/listing-coach
-```
-
-**Full API documentation**: See [DAYS_COMPLETE.md](DAYS_COMPLETE.md)
-
----
-
-## 🔧 Configuration
-
-### Database Connection
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=ShopSense_<ServiceName>DB;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;"
-  }
-}
-```
-
-### JWT Configuration
-```json
-{
-  "Jwt": {
-    "Secret": "ShopSense@SuperSecretKey#2026!IndiaEcommerce$XyZ987",
-    "ExpiryDays": 7
-  }
-}
+┌──────────────────────────────────────────────┐
+│          Python FastAPI ML Services          │
+│  Fraud    │ Recommend │ Sentiment │ Forecast │
+│  :8001    │   :8002   │   :8003   │  :8004   │
+│  Churn    │  Pricing  │           │          │
+│  :8005    │   :8006   │           │          │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🧪 Testing
+## ML Models
 
-### Backend Testing
-1. Register user: `POST /api/v1/auth/register`
-2. Login: `POST /api/v1/auth/login`
-3. Create product: `POST /api/v1/products`
-4. Add to cart: `POST /api/v1/cart/items`
-5. Create order: `POST /api/v1/orders`
-6. Write review: `POST /api/v1/reviews`
-
-### Frontend Testing
-1. Open http://localhost:4200/home
-2. Browse categories and featured products
-3. Register new account with OTP verification
-4. Login and view personalized dashboard
-5. Search and filter products
-6. Add products to wishlist and cart
-7. Place order and write review
-
-**Detailed testing guide**: See [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)
+| Service | Algorithm | Dataset | Key Metric |
+|---|---|---|---|
+| FraudService | XGBoost + SMOTE | 1.47M Kaggle transactions | ROC-AUC: 0.8052 |
+| RecommendationService | SVD (scipy) | 1.59M Amazon India products | RMSE: 0.5252 |
+| SentimentService | TF-IDF + Logistic Regression | 363K Flipkart reviews | Accuracy: 0.9668 |
+| ForecastingService | Holt-Winters Exponential Smoothing | 128K Amazon India orders | MAPE: 42.9% |
+| ChurnService | XGBoost + SMOTE | 5,630 e-commerce customers | ROC-AUC: 0.9857 |
+| PricingService | Gradient Boosting Regressor | 128K Amazon India orders | R²: 0.4689 |
 
 ---
 
-## 📦 Project Structure
+## Features
+
+### Customer Portal
+- Product browsing with search, filters, and category navigation
+- Shopping cart with quantity management
+- Checkout with COD, UPI, Card, and NetBanking payment methods
+- Coupon codes and discount system
+- Product reviews and ratings
+- Wishlist management
+- Order tracking and history
+- AI-powered product recommendations (SVD)
+
+### Seller Portal
+- KYC verification workflow with admin approval
+- Product listing and inventory management
+- AI Listing Coach — ML-powered product title and description suggestions
+- Sales analytics dashboard
+- Order fulfilment management
+
+### Admin Portal
+- Intelligence Dashboard powered by all 6 ML services
+- User management (customers, sellers)
+- Seller KYC approval and rejection
+- Fraud monitoring with XGBoost risk scoring
+- Coupon creation and management
+- Review moderation
+
+---
+
+## Admin Intelligence Dashboard
+
+A real-time analytics dashboard aggregating outputs from all 6 ML microservices:
+
+- **KPI Cards** — revenue, active fraud alerts, churn risk, sentiment score, recommendation coverage, 30-day forecast
+- **Revenue Forecast** — 30-day Holt-Winters prediction with weekend demand peaks visualised
+- **India State Breakdown** — revenue distribution across 8 major states (Maharashtra, Karnataka, Delhi, Tamil Nadu, Gujarat, Rajasthan, West Bengal, Uttar Pradesh)
+- **Fraud Alerts** — live feed with XGBoost risk scores, transaction amounts, and IP geolocation
+- **Review Sentiment** — TF-IDF analysis: 78% positive, 12% neutral, 10% negative with donut chart
+- **Churn Risk by CityTier** — Tier 1/2/3 Indian city segmentation using XGBoost with SMOTE balancing
+- **Dynamic Pricing Benchmarks** — GBR-predicted vs actual prices across 5 product categories
+- **Recommendation Engine Stats** — SVD matrix factorisation metrics, 50K+ products indexed
+
+---
+
+## Project Structure
 
 ```
 ShopSense-Ecommerce/
 ├── src/
-│   ├── backend/
-│   │   ├── ApiGateway/
-│   │   ├── IdentityService.API/
-│   │   ├── IdentityService.Application/
-│   │   ├── IdentityService.Domain/
-│   │   ├── IdentityService.Infrastructure/
-│   │   ├── ProductService.*/
-│   │   ├── OrderService.*/
-│   │   ├── ReviewService.*/
-│   │   └── SellerService.*/
-│   └── frontend/
-│       └── shopsense-frontend/
-├── docs/
-├── DAYS_COMPLETE.md
-├── QUICK_START_GUIDE.md
-├── DATABASE_SETUP_GUIDE.md
-└── README.md
+│   ├── backend/                     # .NET Microservices
+│   │   ├── IdentityService.API/     # Auth + JWT + OTP + Google OAuth
+│   │   ├── ProductService.API/      # Products + Categories + Wishlist
+│   │   ├── OrderService.API/        # Cart + Checkout + Orders + Returns
+│   │   ├── ReviewService.API/       # Product Reviews + Ratings
+│   │   ├── SellerService.API/       # Seller KYC + Management
+│   │   ├── NotificationService.API/ # Email Notifications via RabbitMQ
+│   │   └── ApiGateway/              # Ocelot API Gateway
+│   ├── frontend/
+│   │   └── shopsense-frontend/      # Angular 21 + PrimeNG Aura
+│   └── ml/                          # Python ML Services
+│       ├── FraudService/            # XGBoost fraud detection
+│       ├── RecommendationService/   # SVD product recommendations
+│       ├── SentimentService/        # TF-IDF sentiment analysis
+│       ├── ForecastingService/      # Holt-Winters sales forecasting
+│       ├── ChurnService/            # XGBoost churn prediction
+│       └── PricingService/          # GBR dynamic pricing
+├── docker-compose.yml               # 17 containers
+├── start-local.bat                  # One-click local startup (Windows)
+├── stop-local.bat                   # One-click shutdown (Windows)
+└── .env.example                     # Environment template
 ```
 
 ---
 
-## 🚦 Status
+## Quick Start
 
-| Component | Status | Details |
-|-----------|--------|---------|
-| IdentityService | ✅ Complete | JWT auth, user management |
-| ProductService | ✅ Complete | Catalog, categories, search |
-| OrderService | ✅ Complete | Cart, orders, coupons, addresses |
-| ReviewService | ✅ Complete | Reviews, ratings, sentiment analysis |
-| SellerService | ✅ Complete | KYC, earnings, listing coach |
-| API Gateway | ✅ Complete | Ocelot routing, CORS |
-| Customer Portal | ✅ Complete | 10 pages, responsive design |
-| Seller Portal | ✅ Complete | 7 pages (dashboard, KYC, AI coach, products, orders, earnings) |
-| Admin Portal | ✅ Complete | 4 pages (dashboard, KYC review, orders, coupons) |
+### Docker (Recommended)
 
-**Build Status**: ✅ All services build successfully (0 errors, 0 warnings)  
-**Frontend Build**: ✅ Bundle: 978.26 KB (170.35 KB gzipped)  
-**Total Endpoints**: 50+  
-**Total Databases**: 5  
-**Total Frontend Pages**: 21+  
-**Lines of Code**: ~10,000 (Frontend) + ~15,000 (Backend)
-
----
-
-## 🔐 Security
-
-- JWT token-based authentication
-- Password hashing with BCrypt
-- Role-based authorization (Customer, Seller, Admin)
-- CORS configured for Angular frontend
-- SQL injection prevention via EF Core
-
----
-
-## 🐛 Troubleshooting
-
-### Port Already in Use
-```powershell
-netstat -ano | findstr "5000"
-taskkill /PID <process-id> /F
+```bash
+git clone https://github.com/pavankalyanperla/ShopSense-Ecommerce.git
+cd ShopSense-Ecommerce
+cp .env.example .env
+docker-compose up -d
+# Wait 2 minutes for all 17 containers to start
+# Open http://localhost:4200
 ```
 
-### Database Connection Failed
-- Ensure SQL Server is running
-- Verify connection string in appsettings.json
-- Check SQL Server authentication mode
+### Local Development (Windows)
 
-### Build Errors
-```powershell
-dotnet clean
-dotnet restore
-dotnet build
+```bash
+# Prerequisites: .NET 10 SDK, Python 3.11+, Node.js 20+, Docker Desktop
+
+# Start infrastructure
+docker-compose up -d sqlserver redis rabbitmq
+
+# One-click start all services
+start-local.bat
+
+# Open http://localhost:4200
+```
+
+### Train ML Models
+
+```bash
+cd src/ml/FraudService && python app/train.py
+cd src/ml/RecommendationService && python app/train.py
+cd src/ml/SentimentService && python app/train.py
+cd src/ml/ForecastingService && python app/train.py
+cd src/ml/ChurnService && python app/train.py
+cd src/ml/PricingService && python app/train.py
 ```
 
 ---
 
-## 📝 License
+## API Endpoints
 
-This project is for educational purposes.
+### Identity Service (via Gateway: `/api/v1/auth/...`)
+| Method | Path | Description |
+|---|---|---|
+| POST | /auth/register | Register new user |
+| POST | /auth/login | Login + JWT |
+| POST | /auth/logout | Invalidate token |
+| POST | /auth/refresh | Refresh JWT |
+| POST | /auth/verify | Verify OTP |
+| GET | /auth/google | Google OAuth initiation |
+
+### Product Service (via Gateway: `/api/v1/products/...`)
+| Method | Path | Description |
+|---|---|---|
+| GET | /products | List products (paginated) |
+| GET | /products/{id} | Get product detail |
+| POST | /products | Create product (Seller) |
+| PUT | /products/{id} | Update product |
+| GET | /categories | List categories |
+| GET | /wishlist | Get wishlist |
+| POST | /wishlist/{id} | Add to wishlist |
+
+### Order Service (via Gateway: `/api/v1/orders/...`)
+| Method | Path | Description |
+|---|---|---|
+| GET | /cart | Get cart |
+| POST | /cart/add | Add to cart |
+| PUT | /cart/update | Update quantity |
+| POST | /orders/checkout | Place order |
+| GET | /orders | List orders |
+| GET | /orders/{id} | Order detail |
+
+### ML Services (direct access)
+| Method | Path | Service |
+|---|---|---|
+| POST | /predict | FraudService :8001 |
+| GET | /recommend/{userId} | RecommendationService :8002 |
+| POST | /analyze | SentimentService :8003 |
+| GET | /forecast | ForecastingService :8004 |
+| POST | /predict | ChurnService :8005 |
+| POST | /predict | PricingService :8006 |
+| GET | /health | All ML services |
 
 ---
 
-## 👥 Contributing
+## Port Reference
 
-This is a learning project. Feel free to fork and experiment!
+| Service | Port | Description |
+|---|---|---|
+| Angular Frontend | 4200 | Customer + Seller + Admin portals |
+| API Gateway | 5000 | Ocelot reverse proxy |
+| IdentityService | 5100 | Auth, JWT, OTP, Google OAuth |
+| ProductService | 5200 | Products, categories, wishlist |
+| OrderService | 5300 | Cart, checkout, orders, returns |
+| ReviewService | 5400 | Product reviews |
+| SellerService | 5500 | Seller KYC, management |
+| NotificationService | 5600 | Email notifications (RabbitMQ) |
+| FraudService | 8001 | XGBoost fraud detection |
+| RecommendationService | 8002 | SVD product recommendations |
+| SentimentService | 8003 | TF-IDF review sentiment |
+| ForecastingService | 8004 | Holt-Winters sales forecast |
+| ChurnService | 8005 | XGBoost churn prediction |
+| PricingService | 8006 | GBR dynamic pricing |
+| SQL Server | 1433 | Primary database |
+| Redis | 6379 | Token blacklist + caching |
+| RabbitMQ | 5672 / 15672 | Event bus + management UI |
 
 ---
 
-## 📞 Support
+## Datasets
 
-For issues or questions, check the documentation:
-- [DAYS_COMPLETE.md](DAYS_COMPLETE.md) - Complete feature documentation
-- [QUICK_START_GUIDE.md](QUICK_START_GUIDE.md) - Setup and testing guide
-- [DATABASE_SETUP_GUIDE.md](DATABASE_SETUP_GUIDE.md) - Database configuration
+| Dataset | Source | Size | Used By |
+|---|---|---|---|
+| Fraudulent E-Commerce Transactions | Kaggle (shriyashjagtap) | 1.47M rows | FraudService |
+| Amazon India Products 2023 | Kaggle (asaniczka) | 1.59M products | RecommendationService |
+| Flipkart Product Reviews | Kaggle | 363K reviews | SentimentService |
+| Amazon India Sales | Kaggle (thedevastator) | 128K orders | ForecastingService, PricingService |
+| E-Commerce Customer Churn | Kaggle (ankitverma2010) | 5,630 customers | ChurnService |
 
 ---
 
-**Built with ❤️ using .NET 10.0 and Angular 19**
+## Built By
+
+**Pavan Kalyan Perla**  
+B.Tech CSE | Lovely Professional University  
+GitHub: [@pavankalyanperla](https://github.com/pavankalyanperla)

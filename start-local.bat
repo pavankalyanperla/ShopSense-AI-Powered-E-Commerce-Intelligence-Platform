@@ -8,13 +8,14 @@ docker-compose up -d sqlserver redis rabbitmq
 timeout /t 15 /nobreak
 
 echo [2/4] Starting .NET services...
-start "Identity:5100"  cmd /k "cd /d %~dp0src\backend\IdentityService.API && dotnet run"
-start "Product:5200"   cmd /k "cd /d %~dp0src\backend\ProductService.API && dotnet run"
-start "Order:5300"     cmd /k "cd /d %~dp0src\backend\OrderService.API && dotnet run"
-start "Review:5400"    cmd /k "cd /d %~dp0src\backend\ReviewService.API && dotnet run"
-start "Seller:5500"    cmd /k "cd /d %~dp0src\backend\SellerService.API && dotnet run"
-start "Gateway:5000"   cmd /k "cd /d %~dp0src\backend\ApiGateway && dotnet run"
-timeout /t 20 /nobreak
+start "Identity:5100"      cmd /k "cd /d %~dp0src\backend\IdentityService.API && dotnet run"
+start "Product:5200"       cmd /k "cd /d %~dp0src\backend\ProductService.API && dotnet run"
+start "Order:5300"         cmd /k "cd /d %~dp0src\backend\OrderService.API && dotnet run"
+start "Review:5400"        cmd /k "cd /d %~dp0src\backend\ReviewService.API && dotnet run"
+start "Seller:5500"        cmd /k "cd /d %~dp0src\backend\SellerService.API && dotnet run"
+start "Notification:5600"  cmd /k "cd /d %~dp0src\backend\NotificationService.API && dotnet run"
+start "Gateway:5000"       cmd /k "cd /d %~dp0src\backend\ApiGateway && dotnet run"
+timeout /t 60 /nobreak
 
 echo [3/4] Starting ML services...
 start "Fraud:8001"     cmd /k "cd /d %~dp0src\ml\FraudService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
@@ -29,7 +30,7 @@ echo [4/4] Starting Angular frontend...
 start "Angular:4200"   cmd /k "cd /d %~dp0src\frontend\shopsense-frontend && npm start"
 
 echo ========================================
-echo   All 13 services starting!
+echo   All 14 services starting!
 echo   Wait 60 seconds then open:
 echo   http://localhost:4200
 echo ========================================

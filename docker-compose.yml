@@ -13,8 +13,9 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: shopsense-sqlserver
+    restart: unless-stopped
     environment:
-      SA_PASSWORD: "${SA_PASSWORD}"
+      SA_PASSWORD: "${SA_PASSWORD:-YourStrong@Password123}"
       ACCEPT_EULA: "Y"
       MSSQL_PID: "Express"
     ports:
@@ -24,15 +25,20 @@ services:
     networks:
       - shopsense-network
     healthcheck:
-      test: ["CMD-SHELL", "exit 0"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"${SA_PASSWORD:-YourStrong@Password123}\" -Q 'SELECT 1' -b -o /dev/null || exit 1"]
       interval: 30s
-      timeout: 5s
-      retries: 1
-      start_period: 40s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
 
   redis:
     image: redis:7-alpine
     container_name: shopsense-redis
+    restart: unless-stopped
     ports:
       - "6379:6379"
     volumes:
@@ -43,38 +49,54 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
+      timeout: 5s
       retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   rabbitmq:
     image: rabbitmq:3-management
     container_name: shopsense-rabbitmq
+    restart: unless-stopped
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER:-guest}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS:-guest}"
     networks:
       - shopsense-network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 15s
+      timeout: 10s
       retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   identity-service:
     build:
       context: ./src/backend
       dockerfile: IdentityService.API/Dockerfile
     container_name: shopsense-identity
+    restart: unless-stopped
     ports:
       - "5100:5100"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_IdentityDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_IdentityDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - ConnectionStrings__Redis=redis:6379
       - ASPNETCORE_URLS=http://+:5100
+      - Gmail__User=${GMAIL_USER:-}
+      - Gmail__AppPassword=${GMAIL_APP_PASSWORD:-}
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -85,18 +107,25 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   product-service:
     build:
       context: ./src/backend
       dockerfile: ProductService.API/Dockerfile
     container_name: shopsense-product
+    restart: unless-stopped
     ports:
       - "5200:5200"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ProductDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ProductDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - ASPNETCORE_URLS=http://+:5200
     depends_on:
       sqlserver:
@@ -106,18 +135,25 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   order-service:
     build:
       context: ./src/backend
       dockerfile: OrderService.API/Dockerfile
     container_name: shopsense-order
+    restart: unless-stopped
     ports:
       - "5300:5300"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_OrderDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_OrderDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - RabbitMQ__Host=rabbitmq
       - Services__ProductService=http://product-service:5200
       - Services__FraudService=http://fraud-service:8001
@@ -132,18 +168,25 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   review-service:
     build:
       context: ./src/backend
       dockerfile: ReviewService.API/Dockerfile
     container_name: shopsense-review
+    restart: unless-stopped
     ports:
       - "5400:5400"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ReviewDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_ReviewDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - ASPNETCORE_URLS=http://+:5400
     depends_on:
       sqlserver:
@@ -153,21 +196,28 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   seller-service:
     build:
       context: ./src/backend
       dockerfile: SellerService.API/Dockerfile
     container_name: shopsense-seller
+    restart: unless-stopped
     ports:
       - "5500:5500"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_SellerDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_SellerDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - RabbitMQ__Host=rabbitmq
-      - RabbitMQ__Username=guest
-      - RabbitMQ__Password=guest
+      - RabbitMQ__Username=${RABBITMQ_DEFAULT_USER:-guest}
+      - RabbitMQ__Password=${RABBITMQ_DEFAULT_PASS:-guest}
       - ASPNETCORE_URLS=http://+:5500
     depends_on:
       sqlserver:
@@ -179,23 +229,30 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   notification-service:
     build:
       context: ./src/backend
       dockerfile: NotificationService.API/Dockerfile
     container_name: shopsense-notification
+    restart: unless-stopped
     ports:
       - "5600:5600"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_NotificationDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
-      - Jwt__Secret=${JWT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=ShopSense_NotificationDB;User Id=sa;Password=${SA_PASSWORD:-YourStrong@Password123};TrustServerCertificate=True
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
       - RabbitMQ__Host=rabbitmq
-      - Gmail__User=${GMAIL_USER}
-      - Gmail__AppPassword=${GMAIL_APP_PASSWORD}
+      - Gmail__User=${GMAIL_USER:-}
+      - Gmail__AppPassword=${GMAIL_APP_PASSWORD:-}
       - ASPNETCORE_URLS=http://+:5600
-      - Admin__Email=${GMAIL_USER}
+      - Admin__Email=${GMAIL_USER:-}
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -206,34 +263,55 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   api-gateway:
     build:
       context: ./src/backend
       dockerfile: ApiGateway/Dockerfile
     container_name: shopsense-gateway
+    restart: unless-stopped
     ports:
       - "5000:5000"
     environment:
       - ASPNETCORE_URLS=http://+:5000
+      - Jwt__Secret=${JWT_SECRET:-ShopSenseSecretKey2026IndiaEcommerceXyZ987Secure}
     depends_on:
-      - identity-service
-      - product-service
-      - order-service
-      - review-service
-      - seller-service
-      - notification-service
+      identity-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      review-service:
+        condition: service_started
+      seller-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
     networks:
       - shopsense-network
     healthcheck:
       test: ["CMD-SHELL", "exit 0"]
       interval: 20s
+      timeout: 5s
       retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   fraud-service:
     build: ./src/ml/FraudService
     container_name: shopsense-fraud
+    restart: unless-stopped
     ports:
       - "8001:8001"
     networks:
@@ -244,10 +322,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   recommendation-service:
     build: ./src/ml/RecommendationService
     container_name: shopsense-recommendation
+    restart: unless-stopped
     ports:
       - "8002:8002"
     environment:
@@ -264,10 +347,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   sentiment-service:
     build: ./src/ml/SentimentService
     container_name: shopsense-sentiment
+    restart: unless-stopped
     ports:
       - "8003:8003"
     networks:
@@ -278,10 +366,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   forecasting-service:
     build: ./src/ml/ForecastingService
     container_name: shopsense-forecasting
+    restart: unless-stopped
     ports:
       - "8004:8004"
     networks:
@@ -292,10 +385,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   churn-service:
     build: ./src/ml/ChurnService
     container_name: shopsense-churn
+    restart: unless-stopped
     ports:
       - "8005:8005"
     networks:
@@ -306,10 +404,15 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   pricing-service:
     build: ./src/ml/PricingService
     container_name: shopsense-pricing
+    restart: unless-stopped
     ports:
       - "8006:8006"
     networks:
@@ -320,13 +423,29 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
 
   frontend:
     build: ./src/frontend/shopsense-frontend
     container_name: shopsense-frontend
+    restart: unless-stopped
     ports:
       - "4200:4200"
     depends_on:
-      - api-gateway
+      api-gateway:
+        condition: service_started
     networks:
       - shopsense-network
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 256M
