@@ -5,6 +5,7 @@
 *.suo
 .vs/
 appsettings.Development.json
+**/ocelot.Development.json
 
 # Python
 **/__pycache__/

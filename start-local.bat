@@ -17,12 +17,12 @@ start "Gateway:5000"   cmd /k "cd /d %~dp0src\backend\ApiGateway && dotnet run"
 timeout /t 20 /nobreak
 
 echo [3/4] Starting ML services...
-start "Fraud:8001"     cmd /k "cd /d %~dp0src\ml\FraudService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
-start "Recommend:8002" cmd /k "cd /d %~dp0src\ml\RecommendationService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8002"
-start "Sentiment:8003" cmd /k "cd /d %~dp0src\ml\SentimentService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8003"
-start "Forecast:8004"  cmd /k "cd /d %~dp0src\ml\ForecastingService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8004"
-start "Churn:8005"     cmd /k "cd /d %~dp0src\ml\ChurnService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8005"
-start "Pricing:8006"   cmd /k "cd /d %~dp0src\ml\PricingService & set PYTHONUTF8=1 & python -m uvicorn app.main:app --host 0.0.0.0 --port 8006"
+start "Fraud:8001"     cmd /k "cd /d %~dp0src\ml\FraudService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8001"
+start "Recommend:8002" cmd /k "cd /d %~dp0src\ml\RecommendationService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8002"
+start "Sentiment:8003" cmd /k "cd /d %~dp0src\ml\SentimentService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8003"
+start "Forecast:8004"  cmd /k "cd /d %~dp0src\ml\ForecastingService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8004"
+start "Churn:8005"     cmd /k "cd /d %~dp0src\ml\ChurnService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8005"
+start "Pricing:8006"   cmd /k "cd /d %~dp0src\ml\PricingService && python -m uvicorn app.main:app --host 0.0.0.0 --port 8006"
 timeout /t 5 /nobreak
 
 echo [4/4] Starting Angular frontend...
