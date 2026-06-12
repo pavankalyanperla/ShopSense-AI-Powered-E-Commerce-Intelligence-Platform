@@ -3,38 +3,48 @@ import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
+// Auth endpoints must never trigger a token refresh retry
+const AUTH_SKIP_URLS = [
+  '/auth/login',
+  '/auth/logout',
+  '/auth/refresh',
+  '/auth/register',
+  '/auth/verify',
+  '/auth/google',
+];
+
+// Module-level guard — prevents concurrent refresh attempts across requests
+let isRefreshing = false;
+
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const token = authService.getToken();
 
-  // Clone request and add authorization header if token exists
-  let authReq = req;
-  if (token && !req.url.includes('/auth/refresh')) {
-    authReq = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  // Skip all auth endpoints — never add header or retry for these
+  if (AUTH_SKIP_URLS.some(url => req.url.includes(url))) {
+    return next(req);
   }
+
+  const token = authService.getToken();
+  const authReq = token
+    ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
+    : req;
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      // If 401 error and not already trying to refresh, attempt token refresh
-      if (error.status === 401 && !req.url.includes('/auth/refresh') && !req.url.includes('/auth/login')) {
+      if (error.status === 401 && !isRefreshing) {
+        isRefreshing = true;
         return authService.refreshToken().pipe(
           switchMap(() => {
-            // Retry the original request with new token
+            isRefreshing = false;
             const newToken = authService.getToken();
             const retryReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${newToken}`
-              }
+              setHeaders: { Authorization: `Bearer ${newToken}` }
             });
             return next(retryReq);
           }),
           catchError(refreshError => {
-            // If refresh fails, logout and redirect
-            authService.logout().subscribe();
+            isRefreshing = false;
+            authService.logout();
             return throwError(() => refreshError);
           })
         );

@@ -518,6 +518,6 @@ export class HeaderComponent implements OnInit {
 
   onLogout() {
     this.userMenuOpen = false;
-    this.authService.logout().subscribe();
+    this.authService.logout();
   }
 }

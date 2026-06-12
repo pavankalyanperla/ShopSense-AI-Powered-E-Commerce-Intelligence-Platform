@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, of, tap, catchError, throwError } from 'rxjs';
 import { 
   User, 
   RegisterRequest, 
@@ -61,27 +61,20 @@ export class AuthService {
     }
 
     return this.http.post<AuthResponse>(`${this.API_URL}/refresh`, { refreshToken }).pipe(
-      tap(response => this.handleAuthResponse(response)),
-      catchError(error => {
-        this.logout();
-        return throwError(() => error);
-      })
+      tap(response => this.handleAuthResponse(response))
+      // No logout() call here — the interceptor handles forced logout on refresh failure
     );
   }
 
-  logout(): Observable<any> {
-    const token = this.getToken();
-    if (token) {
-      return this.http.post(`${this.API_URL}/logout`, {}).pipe(
-        tap(() => this.clearAuthData())
-      );
-    } else {
-      this.clearAuthData();
-      return new Observable(observer => {
-        observer.next(null);
-        observer.complete();
-      });
-    }
+  logout(): void {
+    // Clear auth state FIRST so no further requests carry the expired token
+    this.clearAuthData();
+
+    // Fire-and-forget: tell the server to invalidate the refresh token,
+    // but the interceptor skips /auth/logout so a 401 here never loops
+    this.http.post(`${this.API_URL}/logout`, {})
+      .pipe(catchError(() => of(null)))
+      .subscribe();
   }
 
   getCurrentUser(): Observable<User> {
