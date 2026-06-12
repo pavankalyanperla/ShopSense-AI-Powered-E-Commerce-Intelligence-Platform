@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgStyle } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
@@ -10,18 +10,23 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TagModule, DividerModule],
+  imports: [CommonModule, NgStyle, ButtonModule, TagModule, DividerModule],
   template: `
     <div style="padding:0">
 
       <!-- ── Header ── -->
       <div style="display:flex !important;justify-content:space-between;
-                  align-items:flex-start;margin-bottom:1.25rem;
+                  align-items:center;margin-bottom:1.5rem;
                   flex-wrap:wrap;gap:.75rem;
-                  visibility:visible !important;opacity:1 !important">
+                  visibility:visible !important;opacity:1 !important;
+                  position:relative;z-index:10;
+                  padding:1rem 1.25rem;
+                  background:#ffffff;
+                  border:1px solid #f3f4f6;border-radius:12px">
         <div>
-          <h2 style="font-size:1.25rem;font-weight:600;color:#111827 !important;
-                     margin:0 0 4px;visibility:visible !important">
+          <h2 style="font-size:1.25rem !important;font-weight:600 !important;
+                     color:#111827 !important;margin:0 0 4px !important;
+                     display:block !important">
             Admin intelligence dashboard
           </h2>
           <p style="font-size:.75rem;color:#6b7280;margin:0;
@@ -37,11 +42,12 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
         <button
           (click)="onRefresh()"
           [disabled]="refreshing"
-          style="display:flex !important;align-items:center;gap:6px;
-                 padding:.4rem .875rem;border:1px solid #d1d5db;
-                 border-radius:8px;background:#ffffff;cursor:pointer;
-                 font-size:.8rem;color:#374151;
-                 visibility:visible !important">
+          style="display:inline-flex !important;visibility:visible !important;
+                 align-items:center;gap:6px;
+                 padding:.5rem 1rem;
+                 background:#ffffff;border:1px solid #e5e7eb;
+                 border-radius:8px;font-size:.8rem;
+                 color:#374151;cursor:pointer">
           <i [class]="refreshing ? 'pi pi-spin pi-spinner' : 'pi pi-refresh'"></i>
           {{ refreshing ? 'Fetching...' : 'Refresh from ML APIs' }}
         </button>
@@ -214,7 +220,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
           <!-- CSS conic-gradient donut -->
           <div style="display:flex;justify-content:center;margin-bottom:14px">
             <div style="position:relative;width:100px;height:100px">
-              <div [style]="getSentimentDonutStyle()"
+              <div [ngStyle]="{'background': getSentimentGradient()}"
                    style="width:100px;height:100px;border-radius:50%">
               </div>
               <div style="position:absolute;top:50%;left:50%;
@@ -226,28 +232,6 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
                   {{ data?.sentiment?.positivePct || 78 }}%
                 </span>
               </div>
-            </div>
-          </div>
-
-          <!-- Big numbers -->
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
-            <div style="text-align:center;background:#D1FAE5;border-radius:8px;padding:10px 6px">
-              <p style="font-size:1.4rem;font-weight:600;color:#065F46;margin:0">
-                {{ data?.sentiment?.positivePct || 78 }}%
-              </p>
-              <p style="font-size:.65rem;color:#065F46;margin:0">Positive</p>
-            </div>
-            <div style="text-align:center;background:#f3f4f6;border-radius:8px;padding:10px 6px">
-              <p style="font-size:1.4rem;font-weight:600;color:#374151;margin:0">
-                {{ data?.sentiment?.neutralPct || 12 }}%
-              </p>
-              <p style="font-size:.65rem;color:#6b7280;margin:0">Neutral</p>
-            </div>
-            <div style="text-align:center;background:#FEE2E2;border-radius:8px;padding:10px 6px">
-              <p style="font-size:1.4rem;font-weight:600;color:#991B1B;margin:0">
-                {{ data?.sentiment?.negativePct || 10 }}%
-              </p>
-              <p style="font-size:.65rem;color:#991B1B;margin:0">Negative</p>
             </div>
           </div>
 
@@ -299,7 +283,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
           <!-- CSS conic-gradient donut -->
           <div style="display:flex;justify-content:center;margin-bottom:12px">
             <div style="position:relative;width:90px;height:90px">
-              <div [style]="getChurnDonutStyle()"
+              <div [ngStyle]="{'background': getChurnGradient()}"
                    style="width:90px;height:90px;border-radius:50%">
               </div>
               <div style="position:absolute;top:50%;left:50%;
@@ -357,7 +341,7 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
               Pricing benchmarks
             </span>
             <span style="font-size:.7rem;padding:3px 8px;border-radius:4px;
-                         background:#f9fafb;color:#6b7280">GBR &middot; R&sup2; 0.4689</span>
+                         background:#f9fafb;color:#6b7280">GBR &middot; R² 0.4689</span>
           </div>
           <div *ngFor="let b of (data?.pricingBenchmarks || [])"
                style="display:flex;align-items:center;gap:8px;padding:5px 0;
@@ -466,28 +450,23 @@ export class AdminDashboardComponent implements OnInit {
     return (n / 10000000).toFixed(1) + 'Cr';
   }
 
-  // ── donut styles ──
+  // ── donut gradients (ngStyle-safe string concatenation) ──
 
-  getSentimentDonutStyle(): string {
+  getSentimentGradient(): string {
     const pos = this.data?.sentiment?.positivePct ?? 78;
     const neu = this.data?.sentiment?.neutralPct ?? 12;
-    return `background: conic-gradient(
-      #639922 0% ${pos}%,
-      #888780 ${pos}% ${pos + neu}%,
-      #E24B4A ${pos + neu}% 100%
-    )`;
+    return 'conic-gradient(#639922 0% ' + pos + '%, #888780 ' + pos + '% ' + (pos + neu) + '%, #E24B4A ' + (pos + neu) + '% 100%)';
   }
 
-  getChurnDonutStyle(): string {
-    const t1 = 14.5, t2 = 19.8, t3 = 21.4;
+  getChurnGradient(): string {
+    const tiers = this.data?.churnByTier ?? [];
+    const t1 = (tiers.find(t => t.tier === 1)?.churn_rate ?? 0.145) * 100;
+    const t2 = (tiers.find(t => t.tier === 2)?.churn_rate ?? 0.198) * 100;
+    const t3 = (tiers.find(t => t.tier === 3)?.churn_rate ?? 0.214) * 100;
     const total = t1 + t2 + t3;
-    const p1 = (t1 / total) * 100;
-    const p2 = (t2 / total) * 100;
-    return `background: conic-gradient(
-      #378ADD 0% ${p1.toFixed(1)}%,
-      #EF9F27 ${p1.toFixed(1)}% ${(p1 + p2).toFixed(1)}%,
-      #E24B4A ${(p1 + p2).toFixed(1)}% 100%
-    )`;
+    const p1 = (t1 / total * 100);
+    const p2 = ((t1 + t2) / total * 100);
+    return 'conic-gradient(#378ADD 0% ' + p1.toFixed(1) + '%, #EF9F27 ' + p1.toFixed(1) + '% ' + p2.toFixed(1) + '%, #E24B4A ' + p2.toFixed(1) + '% 100%)';
   }
 
   // ── data methods ──
