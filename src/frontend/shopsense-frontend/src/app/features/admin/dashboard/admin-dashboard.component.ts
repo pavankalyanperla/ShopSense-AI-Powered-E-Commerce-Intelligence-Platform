@@ -24,11 +24,11 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
                   background:#ffffff;
                   border:1px solid #f3f4f6;border-radius:12px">
         <div>
-          <h2 style="font-size:1.25rem !important;font-weight:600 !important;
-                     color:#111827 !important;margin:0 0 4px !important;
-                     display:block !important">
+          <div style="font-size:1.25rem !important;font-weight:600 !important;
+                      color:#111827 !important;margin:0 0 4px !important;
+                      display:block !important;line-height:1.3">
             Admin intelligence dashboard
-          </h2>
+          </div>
           <p style="font-size:.75rem;color:#6b7280;margin:0;
                     display:flex;align-items:center;gap:4px">
             <span style="display:inline-block;width:7px;height:7px;
@@ -217,38 +217,43 @@ import { DashboardData } from '../../../core/models/ml-dashboard.models';
             </span>
           </div>
 
-          <!-- CSS conic-gradient donut -->
-          <div style="display:flex;justify-content:center;margin-bottom:14px">
-            <div style="position:relative;width:100px;height:100px">
+          <!-- Donut + bars side by side -->
+          <div style="display:flex;gap:.75rem;align-items:center;margin-bottom:12px">
+
+            <!-- Donut (left) -->
+            <div style="position:relative;width:110px;height:110px;flex-shrink:0">
               <div [ngStyle]="{'background': getSentimentGradient()}"
-                   style="width:100px;height:100px;border-radius:50%">
+                   style="width:110px;height:110px;border-radius:50%">
               </div>
               <div style="position:absolute;top:50%;left:50%;
                           transform:translate(-50%,-50%);
-                          width:62px;height:62px;border-radius:50%;
+                          width:68px;height:68px;border-radius:50%;
                           background:#ffffff;display:flex;
                           align-items:center;justify-content:center">
-                <span style="font-size:.9rem;font-weight:600;color:#065F46">
+                <span style="font-size:.95rem;font-weight:600;color:#065F46">
                   {{ data?.sentiment?.positivePct || 78 }}%
                 </span>
               </div>
             </div>
-          </div>
 
-          <!-- Bars -->
-          <div *ngFor="let s of getSentimentBars()"
-               style="display:flex;align-items:center;gap:8px;padding:4px 0">
-            <span style="font-size:.7rem;min-width:56px;color:#6b7280">{{ s.label }}</span>
-            <div style="flex:1;height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden">
-              <div style="height:100%;border-radius:4px"
-                [style.width]="s.pct + '%'"
-                [style.background]="s.color">
+            <!-- Bars (right) -->
+            <div style="flex:1">
+              <div *ngFor="let s of getSentimentBars()"
+                   style="display:flex;align-items:center;gap:8px;padding:4px 0">
+                <span style="font-size:.7rem;min-width:56px;color:#6b7280">{{ s.label }}</span>
+                <div style="flex:1;height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden">
+                  <div style="height:100%;border-radius:4px"
+                    [style.width]="s.pct + '%'"
+                    [style.background]="s.color">
+                  </div>
+                </div>
+                <span style="font-size:.7rem;font-weight:600;min-width:30px;text-align:right"
+                  [style.color]="s.textColor">
+                  {{ s.pct }}%
+                </span>
               </div>
             </div>
-            <span style="font-size:.7rem;font-weight:600;min-width:30px;text-align:right"
-              [style.color]="s.textColor">
-              {{ s.pct }}%
-            </span>
+
           </div>
 
           <div style="margin-top:10px;padding-top:8px;border-top:1px solid #f3f4f6;
