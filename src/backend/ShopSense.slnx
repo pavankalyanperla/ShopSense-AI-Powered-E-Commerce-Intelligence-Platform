@@ -24,4 +24,7 @@
   <Project Path="SellerService.Application/SellerService.Application.csproj" />
   <Project Path="SellerService.Domain/SellerService.Domain.csproj" />
   <Project Path="SellerService.Infrastructure/SellerService.Infrastructure.csproj" />
+  <Project Path="IdentityService.Tests/IdentityService.Tests.csproj" />
+  <Project Path="ProductService.Tests/ProductService.Tests.csproj" />
+  <Project Path="OrderService.Tests/OrderService.Tests.csproj" />
 </Solution>
