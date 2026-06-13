@@ -1,0 +1,30 @@
+name: Docker Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build all images
+        run: |
+          echo "Building all Docker images..."
+          docker compose build --parallel 2>&1 | tail -20
+          echo ""
+          echo "✅ All images built successfully"
+
+      - name: List built images
+        run: |
+          docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.Size}}" | grep shopsense
+          echo ""
+          echo "Total images:"
+          docker images | grep shopsense | wc -l

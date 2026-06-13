@@ -1,3 +1,6 @@
+![CI](https://github.com/pavankalyanperla/ShopSense-Ecommerce/actions/workflows/ci.yml/badge.svg)
+![Docker](https://github.com/pavankalyanperla/ShopSense-Ecommerce/actions/workflows/docker-build.yml/badge.svg)
+
 # ShopSense — AI-Powered E-Commerce Intelligence Platform
 
 Enterprise-grade e-commerce platform with 6 AI/ML microservices for fraud detection, product recommendations, sentiment analysis, sales forecasting, customer churn prediction, and dynamic pricing.
