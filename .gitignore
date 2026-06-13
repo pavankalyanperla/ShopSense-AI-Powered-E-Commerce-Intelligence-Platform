@@ -4,7 +4,7 @@
 *.user
 *.suo
 .vs/
-appsettings.Development.json
+**/appsettings.Development.json
 **/ocelot.Development.json
 
 # Python
@@ -23,6 +23,10 @@ appsettings.Development.json
 
 # Docker
 .env
+
+# IDE
+.idea/
+.vscode/settings.json
 
 # Misc
 .DS_Store

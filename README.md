@@ -268,8 +268,42 @@ cd src/ml/PricingService && python app/train.py
 
 ---
 
+## Test Coverage
+
+| Suite | Framework | Tests |
+|---|---|---|
+| IdentityService.Tests | NUnit + Moq | 26 |
+| ProductService.Tests | NUnit + Moq | 26 |
+| OrderService.Tests | NUnit + Moq | 29 |
+| FraudService | pytest | 9 |
+| RecommendationService | pytest | 10 |
+| SentimentService | pytest | 10 |
+| ForecastingService | pytest | 12 |
+| ChurnService | pytest | 10 |
+| PricingService | pytest | 11 |
+| **Total** | | **143** |
+
+```bash
+dotnet test src/backend --verbosity normal   # 81 NUnit tests — 0 failures
+cd src/ml/FraudService && python -m pytest tests/ -v   # 9 pytest tests
+```
+
+---
+
+## Documentation
+
+| Document | Description |
+|---|---|
+| [Architecture](docs/ARCHITECTURE.md) | 8 architecture decisions, technology matrix, data flow |
+| [API Reference](docs/API.md) | All endpoints with request/response examples |
+| [Contributing](CONTRIBUTING.md) | Setup guide, branch strategy, PR process |
+| [Portfolio Showcase](docs/showcase.html) | Visual portfolio page (GitHub Pages ready) |
+
+---
+
 ## Built By
 
 **Pavan Kalyan Perla**  
 B.Tech CSE | Lovely Professional University  
-GitHub: [@pavankalyanperla](https://github.com/pavankalyanperla)
+GitHub: [@pavankalyanperla](https://github.com/pavankalyanperla)  
+LinkedIn: [linkedin.com/in/pavankalyanperla](https://www.linkedin.com/in/pavankalyanperla/)

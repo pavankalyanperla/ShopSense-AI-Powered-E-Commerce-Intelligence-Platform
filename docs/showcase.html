@@ -225,14 +225,61 @@
 
   footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .875rem; }
 
+  /* TESTS SECTION */
+  #tests { background: rgba(30,41,59,.4); }
+  .tests-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1.5rem; }
+  .test-group {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    transition: border-color .2s, transform .2s;
+  }
+  .test-group:hover { border-color: #60A5FA; transform: translateY(-2px); }
+  .test-group-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .test-group-name { font-weight: 700; font-size: 1rem; }
+  .test-count-badge {
+    font-size: .8rem; font-weight: 700;
+    background: rgba(16,185,129,.15); color: #34D399;
+    border: 1px solid rgba(16,185,129,.3);
+    padding: .2rem .65rem; border-radius: 999px;
+  }
+  .test-row { display: flex; justify-content: space-between; align-items: center; padding: .35rem 0; border-bottom: 1px solid rgba(51,65,85,.5); font-size: .85rem; }
+  .test-row:last-child { border-bottom: none; }
+  .test-row-name { color: var(--muted); }
+  .test-row-pass { color: #34D399; font-weight: 600; font-size: .8rem; }
+  .tests-summary {
+    margin-top: 2.5rem;
+    background: var(--card); border: 1px solid rgba(16,185,129,.3);
+    border-radius: 14px; padding: 2rem;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 1.5rem;
+    text-align: center;
+  }
+  .ts-value { font-size: 2.25rem; font-weight: 800; color: #34D399; }
+  .ts-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: .25rem; }
+
+  /* BUILD STATS */
+  .stats-banner {
+    background: linear-gradient(135deg, rgba(37,99,235,.15), rgba(124,58,237,.15));
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 2.5rem; text-align: center;
+  }
+  .stats-banner-title { font-size: 1.5rem; font-weight: 700; margin-bottom: .5rem; }
+  .stats-banner-sub { color: var(--muted); margin-bottom: 2rem; }
+  .stats-row { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+  .stat-block { text-align: center; min-width: 100px; }
+  .stat-block-value { font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg,#60A5FA,#A78BFA); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .stat-block-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
   @media (max-width: 640px) {
     nav { padding: 0 1rem; }
-    .nav-links { gap: 1rem; }
+    .nav-links { gap: .75rem; }
+    .nav-links a { font-size: .75rem; }
     section { padding: 3.5rem 1rem; }
     .hero { padding: 5rem 1rem 3rem; }
     .hero-stats { gap: 1.5rem; }
     .arch-box { min-width: 90px; padding: .5rem .75rem; }
     .dp-kpi-row { grid-template-columns: repeat(2,1fr); }
+    .stats-row { gap: 1.25rem; }
+    .stat-block-value { font-size: 2rem; }
   }
 </style>
 </head>
@@ -244,6 +291,7 @@
     <a href="#stack">Stack</a>
     <a href="#ml">ML</a>
     <a href="#features">Features</a>
+    <a href="#tests">Tests</a>
     <a href="#arch">Architecture</a>
     <a href="#contact">Contact</a>
   </div>
@@ -251,7 +299,7 @@
 
 <section class="hero">
   <div class="hero-content">
-    <div class="hero-badge">&#x2728; Portfolio Project &bull; 18-Day Build</div>
+    <div class="hero-badge">&#x2728; Portfolio Project &bull; 21-Day Build Challenge</div>
     <h1><span>AI-Powered</span><br/>E-Commerce Platform</h1>
     <p class="hero-sub">
       Enterprise-grade microservices platform with 6 real ML models trained on millions of rows &mdash;
@@ -268,8 +316,8 @@
     <div class="hero-stats">
       <div class="stat"><div class="stat-value">17</div><div class="stat-label">Docker Containers</div></div>
       <div class="stat"><div class="stat-value">6</div><div class="stat-label">ML Models</div></div>
-      <div class="stat"><div class="stat-value">3.5M+</div><div class="stat-label">Training Rows</div></div>
-      <div class="stat"><div class="stat-value">18</div><div class="stat-label">Days to Build</div></div>
+      <div class="stat"><div class="stat-value">143</div><div class="stat-label">Tests Passing</div></div>
+      <div class="stat"><div class="stat-value">21</div><div class="stat-label">Days to Build</div></div>
     </div>
   </div>
 </section>
@@ -446,6 +494,44 @@
   </div>
 </section>
 
+<section id="tests">
+  <div class="container">
+    <div class="section-label">Quality Assurance</div>
+    <h2 class="section-title">143 Tests, 0 Failures</h2>
+    <p class="section-desc">Full test suite across all .NET microservices and Python ML services, integrated into the CI/CD pipeline.</p>
+    <div class="tests-grid">
+      <div class="test-group">
+        <div class="test-group-header">
+          <div class="test-group-name">&#x2699;&#xFE0F; .NET — NUnit + Moq</div>
+          <div class="test-count-badge">81 tests</div>
+        </div>
+        <div class="test-row"><span class="test-row-name">IdentityService.Tests</span><span class="test-row-pass">26 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">ProductService.Tests</span><span class="test-row-pass">26 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">OrderService.Tests</span><span class="test-row-pass">29 &#x2714;</span></div>
+      </div>
+      <div class="test-group">
+        <div class="test-group-header">
+          <div class="test-group-name">&#x1F40D; Python — pytest + FastAPI TestClient</div>
+          <div class="test-count-badge">62 tests</div>
+        </div>
+        <div class="test-row"><span class="test-row-name">FraudService</span><span class="test-row-pass">9 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">RecommendationService</span><span class="test-row-pass">10 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">SentimentService</span><span class="test-row-pass">10 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">ForecastingService</span><span class="test-row-pass">12 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">ChurnService</span><span class="test-row-pass">10 &#x2714;</span></div>
+        <div class="test-row"><span class="test-row-name">PricingService</span><span class="test-row-pass">11 &#x2714;</span></div>
+      </div>
+    </div>
+    <div class="tests-summary">
+      <div><div class="ts-value">143</div><div class="ts-label">Total Tests</div></div>
+      <div><div class="ts-value">81</div><div class="ts-label">NUnit (.NET)</div></div>
+      <div><div class="ts-value">62</div><div class="ts-label">pytest (Python)</div></div>
+      <div><div class="ts-value">0</div><div class="ts-label" style="color:#F87171">Failures</div></div>
+      <div><div class="ts-value" style="font-size:1.5rem">CI/CD</div><div class="ts-label">Automated on push</div></div>
+    </div>
+  </div>
+</section>
+
 <section id="arch">
   <div class="container">
     <div class="section-label">System Design</div>
@@ -548,6 +634,24 @@
   </div>
 </section>
 
+<section id="stats">
+  <div class="container">
+    <div class="stats-banner">
+      <div class="stats-banner-title">21-Day Build Challenge — Complete</div>
+      <div class="stats-banner-sub">One full-stack, AI-powered e-commerce platform built from scratch in 21 days.</div>
+      <div class="stats-row">
+        <div class="stat-block"><div class="stat-block-value">21</div><div class="stat-block-label">Days</div></div>
+        <div class="stat-block"><div class="stat-block-value">17</div><div class="stat-block-label">Docker Containers</div></div>
+        <div class="stat-block"><div class="stat-block-value">6</div><div class="stat-block-label">Microservices</div></div>
+        <div class="stat-block"><div class="stat-block-value">6</div><div class="stat-block-label">ML Models</div></div>
+        <div class="stat-block"><div class="stat-block-value">143</div><div class="stat-block-label">Tests</div></div>
+        <div class="stat-block"><div class="stat-block-value">5</div><div class="stat-block-label">CI/CD Jobs</div></div>
+        <div class="stat-block"><div class="stat-block-value">3.5M+</div><div class="stat-block-label">Training Rows</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="container">
     <div class="section-label">Builder</div>
@@ -559,7 +663,7 @@
       <div class="contact-links">
         <a href="https://github.com/pavankalyanperla" target="_blank" class="contact-link">&#x1F4BB; GitHub</a>
         <a href="https://github.com/pavankalyanperla/ShopSense-Ecommerce" target="_blank" class="contact-link">&#x2B50; Star the Repo</a>
-        <a href="#" class="contact-link">&#x1F517; LinkedIn</a>
+        <a href="https://www.linkedin.com/in/pavankalyanperla/" target="_blank" class="contact-link">&#x1F517; LinkedIn</a>
       </div>
     </div>
   </div>
@@ -567,7 +671,8 @@
 
 <footer>
   <p>ShopSense &mdash; AI-Powered E-Commerce Intelligence Platform</p>
-  <p style="margin-top:.25rem">Angular 21 &bull; ASP.NET Core 10 &bull; Python FastAPI &bull; 17 Docker Containers &bull; 6 ML Models</p>
+  <p style="margin-top:.25rem">Angular 21 &bull; ASP.NET Core 10 &bull; Python FastAPI &bull; 17 Docker Containers &bull; 6 ML Models &bull; 143 Tests &bull; 5-Job CI/CD</p>
+  <p style="margin-top:.25rem;font-size:.8rem">Built by <a href="https://www.linkedin.com/in/pavankalyanperla/" target="_blank" style="color:#60A5FA">Pavan Kalyan Perla</a> &mdash; 21-Day Build Challenge 2026</p>
 </footer>
 
 </body>
