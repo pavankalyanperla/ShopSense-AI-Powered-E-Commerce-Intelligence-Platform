@@ -54,7 +54,7 @@ jobs:
         run: npm ci
 
       - name: Build Angular app
-        run: npx ng build --configuration=production
+        run: npx ng build
 
       - name: Check build output
         run: |
